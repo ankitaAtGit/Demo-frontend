@@ -62,48 +62,50 @@ class SignUp extends Component {
     }
     render() {
         return (
-            <div style={{ margin: 'auto', width: '30%', padding: '15px', boxShadow: '2px 3px 2px 2px lightgrey' }}>
-                <Form>
-                    <Form.Field>
-                        <label>First Name</label>
-                        <Input type='text' value={this.state.firstName} onChange={(e) => this.setState({ firstName: e.target.value, submitted: false })} />
-                        {this.state.submitted && this.state.firstName === '' ? <Label color='red' pointing basic>Please enter your first name</Label> : null}
-                    </Form.Field>
-                    <Form.Field>
-                        <label>Last Name</label>
-                        <Input type='text' value={this.state.lastName} onChange={(e) => this.setState({ lastName: e.target.value, submitted: false })} />
-                        {this.state.submitted && this.state.lastName === '' ? <Label color='red' pointing basic>Please enter your last name</Label> : null}
-                    </Form.Field>
-                    <Form.Field>
-                        <label>Email</label>
-                        <Input type='email' value={this.state.email} onChange={(e) => this.setState({ email: e.target.value, submitted: false })} />
-                        {this.state.submitted && this.state.name !== '' && this.state.email === '' ? <Label color='red' pointing basic>Please enter your email</Label> : null}
-                    </Form.Field>
-                    <Form.Field>
-                        <label>Password</label>
-                        <Input type='password' value={this.state.password} onChange={(e) => this.setState({ password: e.target.value, submitted: false })} />
-                        {this.state.submitted && this.state.name !== '' && this.state.email !== '' && this.state.password === '' ? <Label color='red' pointing basic>Please enter your password</Label> : null}
-                    </Form.Field>
-                    {this.props.auth.error === '' ? null : <Form.Field><Header size='tiny' color='red'>{this.props.auth.error}</Header></Form.Field>}
-                    <Form.Field>
-                        <label>Upload your profile picture</label>
-                        {
-                            this.state.displayPic === '' ? < ImageUploader
-                                withIcon={true}
-                                name='picture'
-                                buttonText='Choose images'
-                                onChange={this.onDrop}
-                                imgExtension={['.jpg', '.gif', '.png', '.gif']}
-                                singleImage={true} accept={"image/*"}
-                                maxFileSize={5242880} /> :
-                                <div style={{ textAlign: 'center' }}>
-                                    <Image src={this.state.displayPic} size='small' label={<Icon style={{ cursor: "pointer" }} onClick={this.removeImage} name='close' color='red' />} />
-                                </div>
-                        }
-                    </Form.Field>
-                    <Button color='blue' onClick={this.submit}>Sign Up</Button>
-                    <Header size='tiny'>Already have an account? <Header to='/sign-in' size='tiny' color='blue' as={Link}>Sign In</Header></Header>
-                </Form>
+            <div style={{ marginTop: '20px' }}>
+                <div style={{ margin: 'auto', width: '30%', padding: '15px', boxShadow: '2px 3px 2px 2px lightgrey' }}>
+                    <Form>
+                        <Form.Field>
+                            <label>First Name</label>
+                            <Input type='text' value={this.state.firstName} onChange={(e) => this.setState({ firstName: e.target.value, submitted: false })} />
+                            {this.state.submitted && this.state.firstName === '' ? <Label color='red' pointing basic>Please enter your first name</Label> : null}
+                        </Form.Field>
+                        <Form.Field>
+                            <label>Last Name</label>
+                            <Input type='text' value={this.state.lastName} onChange={(e) => this.setState({ lastName: e.target.value, submitted: false })} />
+                            {this.state.submitted && this.state.lastName === '' ? <Label color='red' pointing basic>Please enter your last name</Label> : null}
+                        </Form.Field>
+                        <Form.Field>
+                            <label>Email</label>
+                            <Input type='email' value={this.state.email} onChange={(e) => this.setState({ email: e.target.value, submitted: false })} />
+                            {this.state.submitted && this.state.name !== '' && this.state.email === '' ? <Label color='red' pointing basic>Please enter your email</Label> : null}
+                        </Form.Field>
+                        <Form.Field>
+                            <label>Password</label>
+                            <Input type='password' value={this.state.password} onChange={(e) => this.setState({ password: e.target.value, submitted: false })} />
+                            {this.state.submitted && this.state.name !== '' && this.state.email !== '' && this.state.password === '' ? <Label color='red' pointing basic>Please enter your password</Label> : null}
+                        </Form.Field>
+                        {this.props.auth.error === '' ? null : <Form.Field><Header size='tiny' color='red'>{this.props.auth.error}</Header></Form.Field>}
+                        <Form.Field>
+                            <label>Upload your profile picture</label>
+                            {
+                                this.state.displayPic === '' ? < ImageUploader
+                                    withIcon={true}
+                                    name='picture'
+                                    buttonText='Choose images'
+                                    onChange={this.onDrop}
+                                    imgExtension={['.jpg', '.gif', '.png', '.gif']}
+                                    singleImage={true} accept={"image/*"}
+                                    maxFileSize={5242880} /> :
+                                    <div style={{ textAlign: 'center' }}>
+                                        <Image src={this.state.displayPic} size='small' label={<Icon style={{ cursor: "pointer" }} onClick={this.removeImage} name='close' color='red' />} />
+                                    </div>
+                            }
+                        </Form.Field>
+                        <Button color='linkedin' style={{ borderRadius: '0px' }} onClick={this.submit}>Sign Up</Button>
+                        <Header size='tiny'>Already have an account? <Header to='/sign-in' size='tiny' color='blue' as={Link}>Sign In</Header></Header>
+                    </Form>
+                </div>
             </div>
         )
     }

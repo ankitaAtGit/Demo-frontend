@@ -13,21 +13,26 @@ class AddCourse extends Component {
         UserId: Number(localStorage.getItem('id')),
         price: '',
         submitted: false,
-        invalid: false
+        invalid: false,
+        hover: false
     }
     componentWillMount() {
         if (!localStorage.getItem('token') || !localStorage.getItem('id')) {
             this.props.history.replace('/sign-in')
         }
-        if (this.props.match.params.id && Number(localStorage.getItem('id')) === this.props.course.course.course.UserId) {
+        if (this.props.match.params.id) {
             this.props.getCourseById(Number(this.props.match.params.id)).then(() => {
-                this.setState({
-                    course_name: this.props.course.course.course.course_name,
-                    course_description: this.props.course.course.course.course_description,
-                    CategoryId: this.props.course.course.course.CategoryId,
-                    UserId: this.props.course.course.course.UserId,
-                    price: this.props.course.course.course.price
-                })
+                if (this.props.course)
+                    if (Number(localStorage.getItem('id')) === this.props.course.course.course.UserId)
+                        this.setState({
+                            course_name: this.props.course.course.course.course_name,
+                            course_description: this.props.course.course.course.course_description,
+                            CategoryId: this.props.course.course.course.CategoryId,
+                            UserId: this.props.course.course.course.UserId,
+                            price: this.props.course.course.course.price
+                        })
+                    else
+                        this.props.history.replace('/sign-in')
             })
         }
 
@@ -60,42 +65,44 @@ class AddCourse extends Component {
     }
     render() {
         return (
-            <div style={{ margin: 'auto', width: '50%', boxShadow: '2px 3px 2px 2px lightgrey', padding: '15px' }}>
-                <Form>
-                    <Form.Field>
-                        <label>What would you like to name this course?</label>
-                        <Input type='text' value={this.state.course_name} onChange={(e) => this.setState({ course_name: e.target.value, submitted: false })} />
-                        {this.state.submitted && this.state.course_name === '' ? <Label color='red' pointing basic>This field cannot be empty</Label> : null}
-                    </Form.Field>
-                    <Form.Field>
-                        <label>How would you describe this course?</label>
-                        <TextArea value={this.state.course_description} onChange={(e) => this.setState({ course_description: e.target.value, submitted: false })} />
-                        {this.state.submitted && this.state.course_name !== '' && this.state.course_description === '' ? <Label color='red' pointing basic>This field cannot be empty</Label> : null}
-                    </Form.Field>
-                    <Form.Field>
-                        <label>Which category would best suit your course?</label>
-                        <Select onChange={(event, data) => this.setState({ CategoryId: data.value, submitted: false })} value={this.state.CategoryId} options={
-                            this.props.category.categories.map(category => (
-                                {
-                                    key: category.id,
-                                    value: category.id,
-                                    text: category.category_name
-                                }
-                            ))
-                        } />
-                        {this.state.submitted && this.state.course_name !== '' && this.state.course_description !== '' && this.state.CategoryId === 0 ? <Label color='red' pointing basic>Please select a category for your course</Label> : null}
-                    </Form.Field>
-                    <Form.Field>
-                        <label>Set a price for this course:</label>
-                        <Input type='number' value={this.state.price} onChange={(e) => this.setState({ price: e.target.value, submitted: false, invalid: false })} />
-                        {this.state.submitted && this.state.course_name !== '' && this.state.course_description !== '' && this.state.price === '' ? <Label color='red' pointing basic>This field cannot be empty</Label> : null}
-                        {this.state.submitted && this.state.invalid && this.state.price !== '' ? <Label color='red' pointing basic>Price cannot be negative</Label> : null}
-                    </Form.Field>
-                    {this.props.match.params.id ?
-                        <Button type='submit' color='blue' onClick={this.handleUpdate}>Update</Button>
-                        : <Button type='submit' color='blue' onClick={this.handleSubmit}>Add</Button>}{" "}
-                    <Button type='button' color='red' onClick={() => (this.props.history.push('/mycourses'))}>Cancel</Button>
-                </Form>
+            <div style={{ marginTop: '20px' }}>
+                <div style={{ margin: 'auto', width: '50%', boxShadow: '2px 3px 2px 2px lightgrey', padding: '15px' }}>
+                    <Form>
+                        <Form.Field>
+                            <label>What would you like to name this course?</label>
+                            <Input type='text' value={this.state.course_name} onChange={(e) => this.setState({ course_name: e.target.value, submitted: false })} />
+                            {this.state.submitted && this.state.course_name === '' ? <Label color='red' pointing basic>This field cannot be empty</Label> : null}
+                        </Form.Field>
+                        <Form.Field>
+                            <label>How would you describe this course?</label>
+                            <TextArea value={this.state.course_description} onChange={(e) => this.setState({ course_description: e.target.value, submitted: false })} />
+                            {this.state.submitted && this.state.course_name !== '' && this.state.course_description === '' ? <Label color='red' pointing basic>This field cannot be empty</Label> : null}
+                        </Form.Field>
+                        <Form.Field>
+                            <label>Which category would best suit your course?</label>
+                            <Select onChange={(event, data) => this.setState({ CategoryId: data.value, submitted: false })} value={this.state.CategoryId} options={
+                                this.props.category.categories.map(category => (
+                                    {
+                                        key: category.id,
+                                        value: category.id,
+                                        text: category.category_name
+                                    }
+                                ))
+                            } />
+                            {this.state.submitted && this.state.course_name !== '' && this.state.course_description !== '' && this.state.CategoryId === 0 ? <Label color='red' pointing basic>Please select a category for your course</Label> : null}
+                        </Form.Field>
+                        <Form.Field>
+                            <label>Set a price for this course:</label>
+                            <Input type='number' value={this.state.price} onChange={(e) => this.setState({ price: e.target.value, submitted: false, invalid: false })} />
+                            {this.state.submitted && this.state.course_name !== '' && this.state.course_description !== '' && this.state.price === '' ? <Label color='red' pointing basic>This field cannot be empty</Label> : null}
+                            {this.state.submitted && this.state.invalid && this.state.price !== '' ? <Label color='red' pointing basic>Price cannot be negative</Label> : null}
+                        </Form.Field>
+                        {this.props.match.params.id ?
+                            <Button type='submit' color='linkedin' style={{ borderRadius: '0px', marginBottom: '12px', width: '100px' }} onClick={this.handleUpdate}>Update</Button>
+                            : <Button type='submit' color='linkedin' style={{ borderRadius: '0px', marginBottom: '12px', width: '100px' }} onClick={this.handleSubmit}>Add</Button>}{" "}
+                        <Button type='button' onMouseEnter={() => this.setState({ hover: true })} onMouseLeave={() => this.setState({ hover: false })} style={{ borderRadius: '0px', color: 'white', backgroundColor: this.state.hover ? '#c82333' : '#dc3545' }} onClick={() => (this.props.history.push('/mycourses'))}>Cancel</Button>
+                    </Form>
+                </div>
             </div>
         )
     }

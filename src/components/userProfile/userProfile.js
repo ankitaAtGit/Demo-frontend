@@ -11,7 +11,8 @@ import * as courseActions from '../../actions/course.actions';
 import path from '../../constants/path';
 class UserProfile extends Component {
     state = {
-        editProfile: false
+        editProfile: false,
+        subCourses: true
     }
     componentWillMount() {
         this.props.getUser(this.props.id);
@@ -34,12 +35,12 @@ class UserProfile extends Component {
                     < Header size='small' > {this.props.user.firstName} {this.props.user.lastName}</Header >
                     <Header size='small'>{this.props.user.email}</Header>
                     <Button style={{ borderRadius: '0px', marginBottom: '12px', width: '165px' }}
-                        color='linkedin' onClick={() => this.setState({ editProfile: true })}>
+                        color='linkedin' onClick={() => this.setState({ editProfile: true, subCourses: false })}>
                         Edit Profile
                 </Button>
-                    <Button style={{ borderRadius: '0px', width: '165px' }} color='linkedin'> Subscribed Courses</Button>
+                    <Button style={{ borderRadius: '0px', width: '165px' }} onClick={() => this.setState({ editProfile: false, subCourses: true })} color='linkedin'> Subscribed Courses</Button>
                 </div >
-                {this.state.editProfile ? <EditProfile /> : null}
+                {this.state.editProfile && !this.state.subCourses ? <EditProfile /> : <div>courses</div>}
             </div>
         )
     }

@@ -10,7 +10,8 @@ class Course extends Component {
     state = {
         showConfirm: false,
         course_rating: 0,
-        subbedCourses: []
+        subbedCourses: [],
+        hover: false
     }
     componentWillMount() {
         if (localStorage.getItem('id') && localStorage.getItem('token')) {
@@ -56,41 +57,46 @@ class Course extends Component {
             <div>
                 {!course ? null :
                     (<div>
-                        < div style={{ margin: 'auto', width: '100%', height: '150px', backgroundColor: '#f2711c', padding: '15px' }}>
-                            <Header inverted size='medium'>{course.course.course_name}</Header>
-                            <Header inverted size='small'>{course.course.course_description}</Header>
-                            {course.course.price > 0 ? <Header inverted size='small'>Learn for {course.course.price}/-</Header>
-                                : <Header inverted size='small'>Free</Header>}
-                        </div>
-                        <div>
-                            <p>Author: {course.author.name}</p>
-                        </div>
+                        < div style={{ textAlign: 'center', padding: '12px', height: window.innerHeight, width: '300px', boxShadow: "2px 5px 5px grey" }}>
+                            <Header size='medium'>{course.course.course_name}</Header>
+                            <div style={{ margin: 'auto', width: '19%' }}>
+                                <div style={{ color: 'white', height: 'fit-content', padding: '7px', backgroundColor: '#fc0', borderRadius: '5px', width: 'fit-content' }}>
+                                    {course.course.course_rating} <Icon name='star' inverted />
+                                </div>
+                            </div>
+                            <Header size='small'>{course.course.course_description}</Header>
+                            {course.course.price > 0 ? <Header size='small'>Learn for {course.course.price}/-</Header>
+                                : <Header size='small'>Free</Header>}
+                            <p>by {course.author.firstName} {course.author.lastName}</p>
 
-                        {(localStorage.getItem('id') && Number(localStorage.getItem('id')) === course.author.id) ?
-                            <div>
-                                <Button color='blue' onClick={this.editCourse}>Edit</Button>
-                                <Button onClick={this.toggleConfirm} color='red'>Delete</Button>
-                                <Confirm
-                                    open={this.state.showConfirm}
-                                    size='mini'
-                                    header={<Header size='small'><Icon name='warning sign' color='yellow' />Are you sure you want to delete this course?</Header>}
-                                    content='This action cannot be reversed.'
-                                    confirmButton='Yes'
-                                    cancelButton='No'
-                                    onCancel={this.toggleConfirm}
-                                    onConfirm={this.handleDelete}
-                                />
-                            </div> :
-                            this.state.subbedCourses.findIndex((course) => course.CourseId === this.props.course.course.course.id) === -1 ?
-                                <Button onClick={this.subscribe} color='blue'>Subscribe</Button>
-                                :
-                                (
-                                    <div>
-                                        <Header color='orange' size='small'>Rate this course: </Header>
-                                        <Rating maxRating={5} onRate={this.rateCourse} rating={this.state.course_rating} icon='star' />{" "}
-                                    </div>
-                                )
-                        }
+
+                            {(localStorage.getItem('id') && Number(localStorage.getItem('id')) === course.author.id) ?
+                                <div>
+                                    <Button color='linkedin' style={{ borderRadius: '0px', marginBottom: '12px', width: '100px' }} onClick={this.editCourse}>Edit</Button>
+                                    <br />
+                                    <Button onClick={this.toggleConfirm} onMouseEnter={() => this.setState({ hover: true })} onMouseLeave={() => this.setState({ hover: false })} style={{ borderRadius: '0px', width: '100px', color: 'white', backgroundColor: this.state.hover ? '#c82333' : '#dc3545', marginBottom: '12px' }}>Delete</Button>
+                                    <Confirm
+                                        open={this.state.showConfirm}
+                                        size='mini'
+                                        header={<Header size='small'><Icon name='warning sign' color='yellow' />Are you sure you want to delete this course?</Header>}
+                                        content='This action cannot be reversed.'
+                                        confirmButton='Yes'
+                                        cancelButton='No'
+                                        onCancel={this.toggleConfirm}
+                                        onConfirm={this.handleDelete}
+                                    />
+                                </div> :
+                                this.state.subbedCourses.findIndex((course) => course.CourseId === this.props.course.course.course.id) === -1 ?
+                                    <Button onClick={this.subscribe} style={{ borderRadius: '0px' }} color='linkedin'>Subscribe</Button>
+                                    :
+                                    (
+                                        <div>
+                                            <Header size='small'>Rate this course: </Header>
+                                            <Rating maxRating={5} onRate={this.rateCourse} rating={this.state.course_rating} icon='star' />{" "}
+                                        </div>
+                                    )
+                            }
+                        </div>
                     </div>)
                 }
             </div >

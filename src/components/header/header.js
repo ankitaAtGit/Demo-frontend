@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Menu, Dropdown, Header as Message } from 'semantic-ui-react';
+import { Menu, Dropdown, Header as Message, Search } from 'semantic-ui-react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'react-router-dom';
@@ -40,6 +40,8 @@ class Header extends Component {
                                 )) : <Message size='small' color='red'>Could not load</Message>}
                             </Dropdown.Menu>
                         </Dropdown>
+                        <Search className='item' style={{ marginLeft: '450px', width: '300px' }} placeholder='Search for a course...'>
+                        </Search>
                         <Menu.Item
                             position='right'
                             name='signIn'
@@ -68,10 +70,12 @@ class Header extends Component {
                                 )) : <Message size='small' color='red'>Could not load</Message>}
                             </Dropdown.Menu>
                         </Dropdown>
+                        <Search className='item' style={{ marginLeft: '450px', width: '300px' }} placeholder='Search for a course...'>
+                        </Search>
                         <Menu.Item
                             position='right'
                         >
-                            <Dropdown icon='user' pointing className='link item' style={{ marginRight: "40px" }}>
+                            <Dropdown text='Profile' icon='user' className='item icon' floating labeled button>
                                 <Dropdown.Menu style={{ borderRadius: '0px' }}>
                                     <Dropdown.Item onClick={() => this.props.history.push('/profile')}>Profile</Dropdown.Item>
                                     <Dropdown.Item onClick={() => this.props.history.push('/mycourses')}>Courses</Dropdown.Item>
