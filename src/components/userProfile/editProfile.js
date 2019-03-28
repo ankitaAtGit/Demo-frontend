@@ -5,9 +5,9 @@ import { bindActionCreators } from 'redux';
 import { withRouter } from 'react-router-dom';
 import ImageUploader from 'react-images-upload'
 
-// import * as authActions from '../../actions/auth.actions';
 import * as userActions from '../../actions/user.actions';
-import path from '../../constants/path'
+import { imgPath } from '../../constants/path'
+import '../../constants/image.css'
 
 class EditProfile extends Component {
     state = {
@@ -26,7 +26,7 @@ class EditProfile extends Component {
                 this.setState({
                     firstName: this.props.user.firstName,
                     lastName: this.props.user.lastName,
-                    displayPic: this.props.user.picture ? path + this.props.user.picture : ''
+                    displayPic: this.props.user.picture ? imgPath + this.props.user.picture : ''
                 })
             });
         }
@@ -90,7 +90,10 @@ class EditProfile extends Component {
                                 singleImage={true} accept={"image/*"}
                                 maxFileSize={5242880} /> :
                                 <div style={{ textAlign: 'center' }}>
-                                    <Image src={this.state.displayPic} size='small' label={<Icon style={{ cursor: "pointer" }} onClick={this.removeImage} name='close' color='red' />} />
+                                    <div className="profile-pic">
+                                        <Image src={this.state.displayPic} size='small' alt='' />
+                                        <div className="edit"><Icon style={{ cursor: "pointer" }} onClick={this.removeImage} name='remove circle' color='red' /></div>
+                                    </div>
                                 </div>
                         }
                     </Form.Field>

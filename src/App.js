@@ -12,6 +12,7 @@ import AddCourse from './components/addCourse/addCourse'
 import Course from './components/courses/course/course'
 import UserCourses from './components/userProfile/userCourses'
 import store from './store'
+import CourseChapters from './components/addCourse/courseChapters'
 
 class App extends Component {
   render() {
@@ -21,6 +22,7 @@ class App extends Component {
           <Router>
             <Header />
             <Switch>
+              <Route path='/chapters/:id' component={CourseChapters} />
               <Route path='/sign-in' component={Login} />
               <Route path='/home' component={Dashboard} />
               <Route path='/profile' component={UserProfile} />

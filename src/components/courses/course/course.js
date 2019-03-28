@@ -2,16 +2,18 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'react-router-dom'
-import { Header, Button, Confirm, Icon, Rating } from 'semantic-ui-react';
+import { Header, Button, Confirm, Icon, Rating, Accordion } from 'semantic-ui-react';
 
 import * as courseActions from '../../../actions/course.actions';
+import * as chapterActions from '../../../actions/chapter.actions';
 
 class Course extends Component {
     state = {
         showConfirm: false,
         course_rating: 0,
         subbedCourses: [],
-        hover: false
+        hover: false,
+        activeIndex: -1
     }
     componentWillMount() {
         if (localStorage.getItem('id') && localStorage.getItem('token')) {
@@ -22,6 +24,7 @@ class Course extends Component {
             })
         }
         this.props.getCourseById(Number(this.props.match.params.id))
+        this.props.getChapters(Number(this.props.match.params.id))
     }
     componentWillReceiveProps(newProps) {
         if (newProps.subbedCourses !== this.props.subbedCourses) {
@@ -56,8 +59,8 @@ class Course extends Component {
         return (
             <div>
                 {!course ? null :
-                    (<div>
-                        < div style={{ textAlign: 'center', padding: '12px', height: window.innerHeight, width: '300px', boxShadow: "2px 5px 5px grey" }}>
+                    (<div style={{ display: 'flex' }}>
+                        <div style={{ textAlign: 'center', padding: '12px', height: window.outerHeight, width: '300px', boxShadow: "2px 5px 5px grey" }}>
                             <Header size='medium'>{course.course.course_name}</Header>
                             <div style={{ margin: 'auto', width: '19%' }}>
                                 <div style={{ color: 'white', height: 'fit-content', padding: '7px', backgroundColor: '#fc0', borderRadius: '5px', width: 'fit-content' }}>
@@ -97,6 +100,24 @@ class Course extends Component {
                                     )
                             }
                         </div>
+                        <div style={{ marginLeft: '200px', marginTop: '30px' }}>
+                            <Header>Course Content</Header>
+                            {this.props.chapter.chapters.length > 0 ?
+                                <Accordion styled style={{ width: '850px' }}>
+                                    {this.props.chapter.chapters.map((chapter, i) => {
+                                        return (
+                                            <div key={i}>
+                                                <Accordion.Title active={this.state.activeIndex === i} onClick={(e, { index }) => this.setState(oldState => ({ activeIndex: oldState.activeIndex === index ? -1 : index }))} index={i}>
+                                                    <Header size='medium'>{chapter.chapter_title}</Header>
+                                                </Accordion.Title>
+                                                <Accordion.Content active={this.state.activeIndex === i}>hvfdjgt</Accordion.Content>
+                                            </div>
+                                        )
+                                    })}
+
+                                </Accordion>
+                                : null}
+                        </div>
                     </div>)
                 }
             </div >
@@ -107,8 +128,9 @@ class Course extends Component {
 
 const mapState = (state) => {
     let { course, data, subbedCourses } = state.course;
+    let { chapter } = state;
     return {
-        course, data, subbedCourses
+        course, data, subbedCourses, chapter
     }
 }
 
@@ -118,7 +140,8 @@ const mapDispatch = (dispatch) => {
         subscribeCourse: bindActionCreators(courseActions.subscribeCourse, dispatch),
         getSubscribeCourses: bindActionCreators(courseActions.getSubscribeCourses, dispatch),
         deleteCourse: bindActionCreators(courseActions.deleteCourseAction, dispatch),
-        rateCourse: bindActionCreators(courseActions.rateCourseAction, dispatch)
+        rateCourse: bindActionCreators(courseActions.rateCourseAction, dispatch),
+        getChapters: bindActionCreators(chapterActions.getChaptersAction, dispatch)
     }
 }
 

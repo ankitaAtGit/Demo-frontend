@@ -21,7 +21,7 @@ class UserCourses extends Component {
     render() {
         return (
             ((localStorage.getItem('id') && Number(localStorage.getItem('id')) === Number(this.props.id))) ?
-                <div>
+                <div style={{ marginTop: "20px" }}>
                     <Button color='orange' icon circular compact floated='right' onClick={this.addCourse}>
                         <Icon name='plus' />
                     </Button>
@@ -36,7 +36,6 @@ class UserCourses extends Component {
 const mapState = (state) => {
     return {
         id: state.auth.id,
-        // user: state.auth.user.user,
         courses: state.course.courses
     }
 }

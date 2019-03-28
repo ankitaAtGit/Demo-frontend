@@ -6,6 +6,7 @@ import { withRouter, Link } from 'react-router-dom';
 import ImageUploader from 'react-images-upload'
 
 import * as authActions from '../../actions/auth.actions';
+import '../../constants/image.css'
 
 class SignUp extends Component {
     state = {
@@ -98,10 +99,14 @@ class SignUp extends Component {
                                     singleImage={true} accept={"image/*"}
                                     maxFileSize={5242880} /> :
                                     <div style={{ textAlign: 'center' }}>
-                                        <Image src={this.state.displayPic} size='small' label={<Icon style={{ cursor: "pointer" }} onClick={this.removeImage} name='close' color='red' />} />
+                                        <div className="profile-pic">
+                                            <Image src={this.state.displayPic} size='small' alt='' />
+                                            <div className="edit"><Icon style={{ cursor: "pointer" }} onClick={this.removeImage} name='remove circle' color='red' /></div>
+                                        </div>
                                     </div>
                             }
                         </Form.Field>
+
                         <Button color='linkedin' style={{ borderRadius: '0px' }} onClick={this.submit}>Sign Up</Button>
                         <Header size='tiny'>Already have an account? <Header to='/sign-in' size='tiny' color='blue' as={Link}>Sign In</Header></Header>
                     </Form>

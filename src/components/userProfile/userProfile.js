@@ -8,7 +8,7 @@ import EditProfile from './editProfile';
 import * as userActions from '../../actions/user.actions';
 import * as courseActions from '../../actions/course.actions';
 
-import path from '../../constants/path';
+import { imgPath } from '../../constants/path';
 class UserProfile extends Component {
     state = {
         editProfile: false,
@@ -28,8 +28,8 @@ class UserProfile extends Component {
                     {
                         this.props.user ?
                             this.props.user.picture
-                                ? <Image centered height='100px' width='100px' src={path + this.props.user.picture} circular />
-                                : <Image centered height='100px' width='100px' src={path + 'placeholder.jpg'} circular bordered />
+                                ? <Image centered height='100px' width='100px' src={imgPath + this.props.user.picture} circular />
+                                : <Image centered height='100px' width='100px' src={imgPath + 'placeholder.jpg'} circular bordered />
                             : null
                     }
                     < Header size='small' > {this.props.user.firstName} {this.props.user.lastName}</Header >

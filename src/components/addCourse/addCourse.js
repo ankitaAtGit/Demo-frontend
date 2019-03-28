@@ -46,7 +46,7 @@ class AddCourse extends Component {
             else
                 this.props.createCourse({ course_name, course_description, CategoryId, UserId, price }).then(() => {
                     this.setState({ course_name: '', course_description: '', CategoryId: 0, price: '', submitted: false })
-                    this.props.history.push('/mycourses')
+                    this.props.history.push(`/chapters/${this.props.course.id}`)
                 });
         }
     }

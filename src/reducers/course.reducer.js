@@ -29,6 +29,11 @@ export default (state = initState, action) => {
         case types.GET_COURSE_BY_ID_FAIL:
             return Object.assign({}, state, { error: action.error, course: {} })
 
+        case types.CREATE_COURSE_SUCCESS:
+            return Object.assign({}, state, { course: action.course })
+        case types.CREATE_COURSE_FAIL:
+            return Object.assign({}, state, { error: action.error })
+
         case types.SUBSCRIBE_COURSE_SUCCESS:
             let { subbedCourses } = state;
             subbedCourses.push(action.data)
