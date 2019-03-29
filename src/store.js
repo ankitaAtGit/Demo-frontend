@@ -26,7 +26,14 @@ const initState = {
         error: '',
         course: {},
         courses: [],
-        subbedCourses: []
+        subbedCourses: [],
+        searchedCourses: [],
+        subCourseDetails: []
+    },
+    chapter: {
+        chapter: {},
+        chapters: [],
+        error: ''
     }
 }
 if (localStorage.getItem('token') && localStorage.getItem('id')) {

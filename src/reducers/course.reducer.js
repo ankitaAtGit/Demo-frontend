@@ -4,7 +4,9 @@ const initState = {
     error: '',
     courses: [],
     course: {},
-    subbedCourses: []
+    subbedCourses: [],
+    subCourseDetails: [],
+    searchedCourses: []
 }
 
 export default (state = initState, action) => {
@@ -42,7 +44,8 @@ export default (state = initState, action) => {
             return Object.assign({}, state, { error: action.error, data: {} })
 
         case types.GET_SUBBED_COURSE_SUCCESS:
-            return Object.assign({}, state, { error: '', subbedCourses: [...action.courses] })
+            console.log(state.subCourseDetails, action.courseData)
+            return Object.assign({}, state, { error: '', subbedCourses: [...action.courses], subCourseDetails: [...action.courseData] })
         case types.GET_SUBBED_COURSE_FAIL:
             return Object.assign({}, state, { error: action.error, subbedCourses: [] })
 
@@ -61,13 +64,20 @@ export default (state = initState, action) => {
             return Object.assign({}, state, { error: action.error })
 
         case types.RATE_COURSE_SUCCESS:
-            let { CourseId, rating } = action;
+            let { CourseId, rating, avg } = action;
             let rateCourses = state.subbedCourses;
             let x = rateCourses.findIndex(course => course.CourseId === CourseId && course.UserId === rating.UserId)
             rateCourses[x].course_rating = rating.course_rating;
-            return Object.assign({}, state, { error: '', subbedCourses: [...rateCourses] })
+            let course = state.course
+            course.course.course.course_rating = avg[0]
+            return Object.assign({}, state, { error: '', subbedCourses: [...rateCourses], course: { ...course } })
         case types.RATE_COURSE_FAIL:
             return Object.assign({}, state, { error: action.error, course: {} })
+
+        case types.SEARCH_COURSES_SUCCESS:
+            return Object.assign({}, state, { searchedCourses: action.courses })
+        case types.SEARCH_COURSES_FAIL:
+            return Object.assign({}, state, { error: action.error })
 
         default:
             return state;

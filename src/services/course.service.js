@@ -39,3 +39,7 @@ export const deleteCourseService = (id) => {
 export const rateCourseService = (id, rating) => {
     return baseService.put(`/sub/course-user/rate/${id}`, rating);
 }
+
+export const searchCourseService = (query) => {
+    return baseService.get(`/course/search/${query}`)
+}

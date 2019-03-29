@@ -17,6 +17,8 @@ class CourseChapters extends Component {
     componentWillMount() {
         // console.log(this.props.match.params.id, this.props.location.pathname)
         // if(this.props.location.pathname.match())
+        this.props.getChapters(Number(this.props.match.params.id))
+
     }
     onFilesChange = (files) => {
         this.setState({ chapterFiles: files })
@@ -36,6 +38,13 @@ class CourseChapters extends Component {
             }
         }
         this.props.addChapter(data, config)
+        this.setState({
+            chapterTitle: '',
+            chapterFiles: []
+        })
+    }
+    deleteChapter = () => {
+        console.log()
     }
     removeFile = (id) => {
         let { chapterFiles } = this.state;
@@ -45,7 +54,7 @@ class CourseChapters extends Component {
     }
     render() {
         return (
-            <div style={{ marginTop: '20px', textAlign: 'center' }}>
+            <div style={{ marginTop: '20px' }}>
                 {/* <Button style={{ marginBottom: '12px' }} circular icon='plus' color='linkedin' onClick={this.addChapter} />
                 <Button style={{ marginBottom: '12px' }} circular icon='minus' color='linkedin' onClick={this.removeChapter} /> */}
                 <div style={{ margin: 'auto', width: '50%' }}>
@@ -54,11 +63,11 @@ class CourseChapters extends Component {
                             <Form.Field>
                                 <Input type='text' placeholder='Chapter title' value={this.state.chapterTitle} onChange={(e) => this.setState({ chapterTitle: e.target.value })} />
                             </Form.Field>
-                            <Form.Field>
+                            <Form.Field style={{ textAlign: 'center' }}>
                                 <FileUploader clickable multiple onChange={this.onFilesChange}>
                                     <Button style={{ borderRadius: '0px' }} color='linkedin' content='Click to upload files' />
                                 </FileUploader>
-                                <Table celled size='small' >
+                                {this.state.chapterFiles.length > 0 ? <Table celled size='small' >
                                     <Table.Body>
                                         {this.state.chapterFiles.map((file, i) => {
                                             return <Table.Row textAlign='center' key={i}>
@@ -72,9 +81,12 @@ class CourseChapters extends Component {
                                             </Table.Row>
                                         })}
                                     </Table.Body>
-                                </Table>
+                                </Table> : null}
                             </Form.Field>
-                            <Button circular icon='plus' color='linkedin' onClick={this.addChapter} />
+                            <Form.Field>
+                                <Button circular icon='plus' color='linkedin' onClick={this.addChapter} />
+                                <Button style={{ borderRadius: '0px' }} content='Done' color='green' onClick={() => this.props.history.push('/mycourses')} />
+                            </Form.Field>
                         </Form>
                     </div>
                     {this.props.chapter.chapters.length > 0 ? <Accordion styled style={{ width: '850px' }}>
@@ -82,13 +94,29 @@ class CourseChapters extends Component {
                             return (
                                 <div key={i}>
                                     <Accordion.Title active={this.state.activeIndex === i} onClick={(e, { index }) => this.setState(oldState => ({ activeIndex: oldState.activeIndex === index ? -1 : index }))} index={i}>
-                                        <Header size='medium'>{chapter.chapter_title}</Header>
+                                        <div style={{ display: 'flex', width: '100%' }}>
+                                            <Header size='medium'>{chapter.chapter_title}</Header>
+                                            <Button style={{ marginLeft: '700px' }} icon='remove' color='red' size='mini' onClick={this.deleteChapter} />
+                                        </div>
+                                        <hr />
                                     </Accordion.Title>
-                                    <Accordion.Content active={this.state.activeIndex === i}>hvfdjgt</Accordion.Content>
+                                    <Accordion.Content active={this.state.activeIndex === i}>
+                                        {JSON.parse(chapter.chapter_files).length > 0 ? <Table>
+                                            <Table.Body>
+                                                {JSON.parse(chapter.chapter_files).map((file, i) => {
+                                                    return <Table.Row key={i}>
+                                                        <Table.Cell textAlign='left'>{file}</Table.Cell>
+                                                        <Table.Cell textAlign='right'>
+                                                            <Button size='mini' icon='remove' color='red' onClick={this.deleteFile} />
+                                                        </Table.Cell>
+                                                    </Table.Row>
+                                                })}
+                                            </Table.Body>
+                                        </Table> : null}
+                                    </Accordion.Content>
                                 </div>
                             )
                         })}
-
                     </Accordion> : null}
                 </div>
             </div >
@@ -103,10 +131,8 @@ const mapState = (state) => {
 }
 const mapDispatch = (dispatch) => {
     return {
-        // createCourse: bindActionCreators(courseActions.createCourseAction, dispatch),
-        // getCourseById: bindActionCreators(courseActions.getCourseById, dispatch),
-        // editCourse: bindActionCreators(courseActions.editCourseAction, dispatch)
-        addChapter: bindActionCreators(chapterActions.addChapterAction, dispatch)
+        addChapter: bindActionCreators(chapterActions.addChapterAction, dispatch),
+        getChapters: bindActionCreators(chapterActions.getChaptersAction, dispatch)
     }
 }
 

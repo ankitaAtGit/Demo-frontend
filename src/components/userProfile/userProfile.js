@@ -7,8 +7,9 @@ import { withRouter } from 'react-router-dom'
 import EditProfile from './editProfile';
 import * as userActions from '../../actions/user.actions';
 import * as courseActions from '../../actions/course.actions';
-
+import UserSubCourses from './userSubCourses'
 import { imgPath } from '../../constants/path';
+
 class UserProfile extends Component {
     state = {
         editProfile: false,
@@ -40,7 +41,7 @@ class UserProfile extends Component {
                 </Button>
                     <Button style={{ borderRadius: '0px', width: '165px' }} onClick={() => this.setState({ editProfile: false, subCourses: true })} color='linkedin'> Subscribed Courses</Button>
                 </div >
-                {this.state.editProfile && !this.state.subCourses ? <EditProfile /> : <div>courses</div>}
+                {this.state.editProfile && !this.state.subCourses ? <EditProfile /> : <UserSubCourses id={this.props.user.id} />}
             </div>
         )
     }

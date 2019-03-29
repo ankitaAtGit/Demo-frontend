@@ -27,6 +27,17 @@ class Course extends Component {
         this.props.getChapters(Number(this.props.match.params.id))
     }
     componentWillReceiveProps(newProps) {
+        if (newProps.match.params.id !== this.props.match.params.id) {
+            if (localStorage.getItem('id') && localStorage.getItem('token')) {
+                this.props.getSubscribeCourses(Number(localStorage.getItem('id'))).then(() => {
+                    let i = newProps.subbedCourses.findIndex(course => course.CourseId === Number(newProps.match.params.id));
+                    if (i !== -1)
+                        this.setState({ course_rating: newProps.subbedCourses[i].course_rating, subbedCourses: newProps.subbedCourses })
+                })
+            }
+            this.props.getCourseById(Number(newProps.match.params.id))
+            this.props.getChapters(Number(newProps.match.params.id))
+        }
         if (newProps.subbedCourses !== this.props.subbedCourses) {
             this.setState({ subbedCourses: newProps.subbedCourses })
         }
