@@ -13,10 +13,9 @@ class CourseChapters extends Component {
         chapterTitle: '',
         chapterFiles: [],
         activeIndex: -1,
+        key: 0
     }
     componentWillMount() {
-        // console.log(this.props.match.params.id, this.props.location.pathname)
-        // if(this.props.location.pathname.match())
         this.props.getChapters(Number(this.props.match.params.id))
 
     }
@@ -32,19 +31,23 @@ class CourseChapters extends Component {
             })
         }
         data.append('CourseId', Number(this.props.match.params.id))
+        this.setState(oldState => ({
+            chapterTitle: '',
+            chapterFiles: [],
+            key: oldState.key + 1
+        }))
         const config = {
             headers: {
                 'content-type': 'multipart/form-data'
             }
         }
         this.props.addChapter(data, config)
-        this.setState({
-            chapterTitle: '',
-            chapterFiles: []
-        })
     }
-    deleteChapter = () => {
-        console.log()
+    deleteChapter = (id) => {
+        this.props.deleteChapter(id)
+    }
+    deleteFile = (file, id) => {
+        this.props.deleteFile(file, id)
     }
     removeFile = (id) => {
         let { chapterFiles } = this.state;
@@ -55,8 +58,6 @@ class CourseChapters extends Component {
     render() {
         return (
             <div style={{ marginTop: '20px' }}>
-                {/* <Button style={{ marginBottom: '12px' }} circular icon='plus' color='linkedin' onClick={this.addChapter} />
-                <Button style={{ marginBottom: '12px' }} circular icon='minus' color='linkedin' onClick={this.removeChapter} /> */}
                 <div style={{ margin: 'auto', width: '50%' }}>
                     <div style={{ boxShadow: '2px 3px 2px 2px lightgrey', padding: '15px', marginBottom: '15px' }}>
                         <Form>
@@ -64,7 +65,7 @@ class CourseChapters extends Component {
                                 <Input type='text' placeholder='Chapter title' value={this.state.chapterTitle} onChange={(e) => this.setState({ chapterTitle: e.target.value })} />
                             </Form.Field>
                             <Form.Field style={{ textAlign: 'center' }}>
-                                <FileUploader clickable multiple onChange={this.onFilesChange}>
+                                <FileUploader key={this.state.key} clickable multiple onChange={this.onFilesChange}>
                                     <Button style={{ borderRadius: '0px' }} color='linkedin' content='Click to upload files' />
                                 </FileUploader>
                                 {this.state.chapterFiles.length > 0 ? <Table celled size='small' >
@@ -84,36 +85,38 @@ class CourseChapters extends Component {
                                 </Table> : null}
                             </Form.Field>
                             <Form.Field>
-                                <Button circular icon='plus' color='linkedin' onClick={this.addChapter} />
-                                <Button style={{ borderRadius: '0px' }} content='Done' color='green' onClick={() => this.props.history.push('/mycourses')} />
+                                <Button type='button' circular icon='plus' color='linkedin' onClick={this.addChapter} />
+                                <Button type='button' style={{ borderRadius: '0px' }} content='Done' color='green' onClick={() => this.props.history.push('/mycourses')} />
                             </Form.Field>
                         </Form>
                     </div>
-                    {this.props.chapter.chapters.length > 0 ? <Accordion styled style={{ width: '850px' }}>
+                    {this.props.chapter.chapters.length > 0 ? <Accordion styled style={{ width: '800px' }}>
                         {this.props.chapter.chapters.map((chapter, i) => {
                             return (
                                 <div key={i}>
                                     <Accordion.Title active={this.state.activeIndex === i} onClick={(e, { index }) => this.setState(oldState => ({ activeIndex: oldState.activeIndex === index ? -1 : index }))} index={i}>
-                                        <div style={{ display: 'flex', width: '100%' }}>
-                                            <Header size='medium'>{chapter.chapter_title}</Header>
-                                            <Button style={{ marginLeft: '700px' }} icon='remove' color='red' size='mini' onClick={this.deleteChapter} />
+                                        <div style={{ display: 'flex' }}>
+                                            <div style={{ width: '50%' }}>
+                                                <Header size='medium'>{chapter.chapter_title}</Header>
+                                            </div>
+                                            <Button style={{ marginLeft: '400px' }} icon='remove' color='red' size='mini' onClick={() => this.deleteChapter(chapter.id)} />
                                         </div>
                                         <hr />
                                     </Accordion.Title>
-                                    <Accordion.Content active={this.state.activeIndex === i}>
-                                        {JSON.parse(chapter.chapter_files).length > 0 ? <Table>
+                                    {JSON.parse(chapter.chapter_files).length > 0 ? <Accordion.Content active={this.state.activeIndex === i}>
+                                        <Table>
                                             <Table.Body>
                                                 {JSON.parse(chapter.chapter_files).map((file, i) => {
                                                     return <Table.Row key={i}>
                                                         <Table.Cell textAlign='left'>{file}</Table.Cell>
                                                         <Table.Cell textAlign='right'>
-                                                            <Button size='mini' icon='remove' color='red' onClick={this.deleteFile} />
+                                                            <Button size='mini' icon='remove' color='red' onClick={() => this.deleteFile(file, chapter.id)} />
                                                         </Table.Cell>
                                                     </Table.Row>
                                                 })}
                                             </Table.Body>
-                                        </Table> : null}
-                                    </Accordion.Content>
+                                        </Table>
+                                    </Accordion.Content> : null}
                                 </div>
                             )
                         })}
@@ -132,7 +135,9 @@ const mapState = (state) => {
 const mapDispatch = (dispatch) => {
     return {
         addChapter: bindActionCreators(chapterActions.addChapterAction, dispatch),
-        getChapters: bindActionCreators(chapterActions.getChaptersAction, dispatch)
+        getChapters: bindActionCreators(chapterActions.getChaptersAction, dispatch),
+        deleteChapter: bindActionCreators(chapterActions.deleteChapterAction, dispatch),
+        deleteFile: bindActionCreators(chapterActions.deleteFileAction, dispatch)
     }
 }
 

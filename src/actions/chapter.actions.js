@@ -40,3 +40,43 @@ export const getChaptersAction = (id) => {
         })
     }
 }
+
+export const deleteChapterAction = (id) => {
+    return (dispatch) => {
+        return services.deleteChapterService(id).then(response => {
+            if (response.status === 200) {
+                dispatch({
+                    type: types.DELETE_CHAPTER_SUCCESS,
+                    id
+                })
+            }
+        }).catch(err => {
+            if (err.response) {
+                dispatch({
+                    type: types.DELETE_CHAPTER_FAIL,
+                    error: err.response.data.error
+                })
+            }
+        })
+    }
+}
+
+export const deleteFileAction = (file, id) => {
+    return (dispatch) => {
+        return services.deleteFileService(file, id).then(response => {
+            if (response.status === 200) {
+                dispatch({
+                    type: types.DELETE_FILE_SUCCESS,
+                    file, id
+                })
+            }
+        }).catch(err => {
+            if (err.response) {
+                dispatch({
+                    type: types.DELETE_FILE_FAIL,
+                    error: err.response.data.error
+                })
+            }
+        })
+    }
+}

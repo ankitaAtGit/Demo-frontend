@@ -13,5 +13,5 @@ export const deleteChapterService = (id) => {
 }
 
 export const deleteFileService = (file, id) => {
-    return baseService.delete(`/id/${id}/file/${file}`)
+    return baseService.delete(`/chapter/id/${id}/file/${file}`)
 }

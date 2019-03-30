@@ -5,6 +5,7 @@ import { bindActionCreators } from 'redux';
 
 import CourseCards from '../courses/courseCards/courseCards';
 import * as courseActions from '../../actions/course.actions';
+import { Header } from 'semantic-ui-react';
 
 class UserSubCourses extends Component {
     componentWillReceiveProps(newProps) {
@@ -17,8 +18,11 @@ class UserSubCourses extends Component {
     render() {
         return (
             <div style={{ margin: '30px', width: '100%' }}>
+                <Header textAlign='center'>Subscribed Courses</Header>
+                <hr />
+                <br/>
                 <CourseCards courses={this.props.courses} selectCourse={this.selectCourse} />
-            </div>
+            </div >
         )
     }
 }

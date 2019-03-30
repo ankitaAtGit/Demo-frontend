@@ -71,7 +71,7 @@ class Course extends Component {
             <div>
                 {!course ? null :
                     (<div style={{ display: 'flex' }}>
-                        <div style={{ textAlign: 'center', padding: '12px', height: window.outerHeight, width: '300px', boxShadow: "2px 5px 5px grey" }}>
+                        <div style={{ textAlign: 'center', padding: '26px', height: window.outerHeight, width: '300px', boxShadow: "2px 5px 5px grey" }}>
                             <Header size='medium'>{course.course.course_name}</Header>
                             <div style={{ margin: 'auto', width: '19%' }}>
                                 <div style={{ color: 'white', height: 'fit-content', padding: '7px', backgroundColor: '#fc0', borderRadius: '5px', width: 'fit-content' }}>

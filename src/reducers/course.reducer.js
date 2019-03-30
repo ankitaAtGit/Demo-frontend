@@ -44,7 +44,6 @@ export default (state = initState, action) => {
             return Object.assign({}, state, { error: action.error, data: {} })
 
         case types.GET_SUBBED_COURSE_SUCCESS:
-            console.log(state.subCourseDetails, action.courseData)
             return Object.assign({}, state, { error: '', subbedCourses: [...action.courses], subCourseDetails: [...action.courseData] })
         case types.GET_SUBBED_COURSE_FAIL:
             return Object.assign({}, state, { error: action.error, subbedCourses: [] })

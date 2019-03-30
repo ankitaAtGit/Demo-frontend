@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Menu, Dropdown, Header as Message, Search, Button } from 'semantic-ui-react';
+import { Menu, Dropdown, Header as Message, Search, Button, Icon } from 'semantic-ui-react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'react-router-dom';
@@ -45,56 +45,50 @@ class Header extends Component {
         return (
             <div>
                 {this.props.auth.token === '' ?
-                    <Menu style={{ backgroundColor: 'firebrick', height: "57px", borderRadius: '0px' }} inverted>
+                    <Menu style={{ backgroundColor: 'firebrick', height: "60px", borderRadius: '0px', padding: '12px' }} inverted>
                         <Menu.Item
                             name='Home'
                             onClick={() => this.props.history.push('/home')}
                         >
                             Home
                         </Menu.Item>
-                        <Dropdown text='Categories' pointing className='link item'>
+                        <Dropdown icon={<div><Icon name='th' />Categories</div>} pointing item>
                             <Dropdown.Menu>
                                 {this.props.category.categories.length > 0 ? this.props.category.categories.map(category => (
                                     <Dropdown.Item key={category.id} onClick={() => this.showCourseById(category.id)}>{category.category_name}</Dropdown.Item>
                                 )) : <Message size='small' color='red'>Could not load</Message>}
                             </Dropdown.Menu>
                         </Dropdown>
-                        <Search className='item' style={{ marginLeft: '450px', width: '300px' }}
+                        <Search className='item' style={{ marginLeft: '325px', width: '400px' }}
                             placeholder='Search for a course...'
                             onSearchChange={this.searchCourse}
                             results={this.state.searchResults}
                             onResultSelect={this.resultSelect}
                             value={this.state.query}>
                         </Search>
-                        <Menu.Item
-                            position='right'
-                            name='signIn'
-                            onClick={this.handleSignInClick}
-                        >
-                            Sign In
+                        <Menu.Item position='right'>
+                            <Button className='link item' onClick={this.handleSignInClick} content='Login' />
                         </Menu.Item>
-                        <Menu.Item
-                            name='signUp'
-                            onClick={() => this.props.history.push('/sign-up')}
-                        >
-                            Sign Up
+                        <Menu.Item>
+                            <Button className='link item' onClick={() => this.props.history.push('/sign-up')} content='Sign Up' />
+
                         </Menu.Item>
                     </Menu> :
-                    <Menu style={{ backgroundColor: 'firebrick', height: "55px", borderRadius: '0px' }} inverted>
+                    <Menu style={{ backgroundColor: 'firebrick', height: "60px", borderRadius: '0px', padding: '12px' }} inverted>
                         <Menu.Item
                             name='Home'
                             onClick={() => this.props.history.push('/home')}
                         >
                             Home
                         </Menu.Item>
-                        <Dropdown text='Categories' pointing className='link item'>
+                        <Dropdown icon={<div><Icon name='th' />Categories</div>} pointing item>
                             <Dropdown.Menu>
                                 {this.props.category.categories.length > 0 ? this.props.category.categories.map(category => (
                                     <Dropdown.Item key={category.id} onClick={() => this.showCourseById(category.id)}>{category.category_name}</Dropdown.Item>
                                 )) : <Message size='small' color='red'>Could not load</Message>}
                             </Dropdown.Menu>
                         </Dropdown>
-                        <Search className='item' style={{ marginLeft: '450px', width: '300px' }}
+                        <Search className='item' style={{ marginLeft: '325px', width: '400px' }}
                             placeholder='Search for a course...'
                             onSearchChange={this.searchCourse}
                             results={this.state.searchResults}

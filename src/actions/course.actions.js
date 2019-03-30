@@ -121,7 +121,6 @@ export const subscribeCourse = (data) => {
 export const getSubscribeCourses = (id) => {
     return (dispatch) => {
         return services.getSubscribeCourses(id).then(response => {
-            console.log(response.data.courseData)
             if (response.status === 200) {
                 dispatch({
                     type: types.GET_SUBBED_COURSE_SUCCESS,
