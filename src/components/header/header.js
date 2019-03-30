@@ -16,6 +16,9 @@ class Header extends Component {
 
     componentWillMount = () => {
         this.props.getCategoriesAction();
+        if (localStorage.getItem('token') && localStorage.getItem('id')) {
+            console.log(localStorage.getItem('id'))
+        }
     }
     handleSignInClick = () => {
         this.props.history.push('/sign-in')
@@ -95,8 +98,10 @@ class Header extends Component {
                             onResultSelect={this.resultSelect}
                             value={this.state.query}>
                         </Search>
-                        <Menu.Item
-                            position='right'>
+                        <Menu.Item name='cart' position='right'>
+                            <Button className='link item' icon='cart' />
+                        </Menu.Item>
+                        <Menu.Item>
                             <Button content='Upload Course' className='link item' icon='plus' onClick={this.addCourse} />
                         </Menu.Item>
                         <Dropdown text='Profile' className='item'>

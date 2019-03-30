@@ -36,6 +36,7 @@ const initState = {
         error: ''
     }
 }
+
 if (localStorage.getItem('token') && localStorage.getItem('id')) {
     initState.auth.token = localStorage.getItem('token');
     initState.auth.id = localStorage.getItem('id');
