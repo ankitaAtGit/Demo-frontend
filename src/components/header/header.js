@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Menu, Dropdown, Header as Message, Search, Button, Icon } from 'semantic-ui-react';
+import { Menu, Dropdown, Header as Message, Search, Button, Icon, Label } from 'semantic-ui-react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'react-router-dom';
@@ -7,6 +7,7 @@ import { withRouter } from 'react-router-dom';
 import * as authActions from '../../actions/auth.actions';
 import * as categoryActions from '../../actions/category.actions';
 import * as courseActions from '../../actions/course.actions';
+import * as cartActions from '../../actions/cart.actions';
 
 class Header extends Component {
     state = {
@@ -17,7 +18,7 @@ class Header extends Component {
     componentWillMount = () => {
         this.props.getCategoriesAction();
         if (localStorage.getItem('token') && localStorage.getItem('id')) {
-            console.log(localStorage.getItem('id'))
+            this.props.countCart(Number(localStorage.getItem('id')))
         }
     }
     handleSignInClick = () => {
@@ -48,7 +49,7 @@ class Header extends Component {
         return (
             <div>
                 {this.props.auth.token === '' ?
-                    <Menu style={{ backgroundColor: 'firebrick', height: "60px", borderRadius: '0px', padding: '12px' }} inverted>
+                    <Menu style={{ backgroundColor: '#dc3545', height: "60px", borderRadius: '0px', padding: '12px' }} inverted>
                         <Menu.Item
                             name='Home'
                             onClick={() => this.props.history.push('/home')}
@@ -77,7 +78,7 @@ class Header extends Component {
 
                         </Menu.Item>
                     </Menu> :
-                    <Menu style={{ backgroundColor: 'firebrick', height: "60px", borderRadius: '0px', padding: '12px' }} inverted>
+                    <Menu style={{ backgroundColor: '#dc3545', height: "60px", borderRadius: '0px', padding: '12px' }} inverted>
                         <Menu.Item
                             name='Home'
                             onClick={() => this.props.history.push('/home')}
@@ -98,8 +99,9 @@ class Header extends Component {
                             onResultSelect={this.resultSelect}
                             value={this.state.query}>
                         </Search>
-                        <Menu.Item name='cart' position='right'>
-                            <Button className='link item' icon='cart' />
+                        <Menu.Item name='cart' position='right' as='a' onClick={() => { this.props.history.push('/cart') }} >
+                            <Icon name='cart' style={{ fontSize: '25px' }} />
+                            {this.props.cart.count > 0 ? < Label size='mini' circular color='blue' floating>{this.props.cart.count}</Label> : null}
                         </Menu.Item>
                         <Menu.Item>
                             <Button content='Upload Course' className='link item' icon='plus' onClick={this.addCourse} />
@@ -123,14 +125,16 @@ const mapState = (state) => {
     return {
         auth: state.auth,
         category: state.category,
-        course: state.course
+        course: state.course,
+        cart: state.cart
     }
 }
 const mapDispatch = (dispatch) => {
     return {
         signOutAction: bindActionCreators(authActions.signOutAction, dispatch),
         getCategoriesAction: bindActionCreators(categoryActions.getCategoriesAction, dispatch),
-        searchCourse: bindActionCreators(courseActions.searchCourseAction, dispatch)
+        searchCourse: bindActionCreators(courseActions.searchCourseAction, dispatch),
+        countCart: bindActionCreators(cartActions.countCartAction, dispatch)
     }
 }
 export default withRouter(connect(mapState, mapDispatch)(Header));

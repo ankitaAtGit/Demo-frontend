@@ -106,6 +106,7 @@ export const subscribeCourse = (data) => {
                     type: types.SUBSCRIBE_COURSE_SUCCESS,
                     data: response.data
                 })
+
             }
         }).catch(err => {
             if (err.response) {

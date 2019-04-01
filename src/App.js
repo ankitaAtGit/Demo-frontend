@@ -13,6 +13,7 @@ import Course from './components/courses/course/course'
 import UserCourses from './components/userProfile/userCourses'
 import store from './store'
 import CourseChapters from './components/addCourse/courseChapters'
+import Cart from './components/cart/cart'
 
 class App extends Component {
   render() {
@@ -32,6 +33,7 @@ class App extends Component {
               <Route path='/new-course' component={AddCourse} />
               <Route path='/edit-course/:id' component={AddCourse} />
               <Route path='/mycourses' component={UserCourses} />
+              <Route path='/cart' component={Cart} />
               <Route path='/' component={Dashboard} />
             </Switch>
           </Router>

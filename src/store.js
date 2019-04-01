@@ -34,6 +34,10 @@ const initState = {
         chapter: {},
         chapters: [],
         error: ''
+    },
+    cart: {
+        cart: [],
+        error: ''
     }
 }
 

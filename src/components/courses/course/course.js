@@ -6,6 +6,8 @@ import { Header, Button, Confirm, Icon, Rating, Accordion } from 'semantic-ui-re
 
 import * as courseActions from '../../../actions/course.actions';
 import * as chapterActions from '../../../actions/chapter.actions';
+import * as cartActions from '../../../actions/cart.actions'
+import CheckoutModal from '../../checkout/checkout';
 
 class Course extends Component {
     state = {
@@ -13,10 +15,12 @@ class Course extends Component {
         course_rating: 0,
         subbedCourses: [],
         hover: false,
-        activeIndex: -1
+        activeIndex: -1,
+        open: false
     }
     componentWillMount() {
         if (localStorage.getItem('id') && localStorage.getItem('token')) {
+            this.props.getCart(Number(localStorage.getItem('id')))
             this.props.getSubscribeCourses(Number(localStorage.getItem('id'))).then(() => {
                 let i = this.props.subbedCourses.findIndex(course => course.CourseId === Number(this.props.match.params.id));
                 if (i !== -1)
@@ -50,9 +54,15 @@ class Course extends Component {
             this.props.history.push('/mycourses')
         })
     }
+    goToCart = () => {
+        this.props.history.push('/cart')
+    }
+    toggle = () => {
+        this.setState(oldState => ({ open: !oldState.open }))
+    }
     subscribe = () => {
         if (localStorage.getItem('id') && localStorage.getItem('token')) {
-            this.props.subscribeCourse({ CourseId: this.props.course.course.course.id, UserId: Number(localStorage.getItem('id')) })
+            this.toggle()
         }
         else
             this.props.history.push('/sign-in')
@@ -61,7 +71,9 @@ class Course extends Component {
         this.setState({ course_rating: rating })
         this.props.rateCourse(this.props.course.course.course.id, { UserId: Number(localStorage.getItem('id')), course_rating: rating })
     }
-
+    addToCart = () => {
+        this.props.addToCart({ UserId: Number(localStorage.getItem('id')), CourseId: this.props.course.course.course.id })
+    }
     editCourse = () => {
         this.props.history.push(`/edit-course/${this.props.course.course.course.id}`)
     }
@@ -84,7 +96,7 @@ class Course extends Component {
                             <p>by {course.author.firstName} {course.author.lastName}</p>
 
 
-                            {(localStorage.getItem('id') && Number(localStorage.getItem('id')) === course.author.id) ?
+                            {(localStorage.getItem('token') && localStorage.getItem('id') && Number(localStorage.getItem('id')) === course.author.id) ?
                                 <div>
                                     <Button color='linkedin' style={{ borderRadius: '0px', marginBottom: '12px', width: '100px' }} onClick={this.editCourse}>Edit</Button>
                                     <br />
@@ -101,7 +113,18 @@ class Course extends Component {
                                     />
                                 </div> :
                                 this.state.subbedCourses.findIndex((course) => course.CourseId === this.props.course.course.course.id) === -1 ?
-                                    <Button onClick={this.subscribe} style={{ borderRadius: '0px' }} color='linkedin'>Subscribe</Button>
+                                    <div>
+                                        <CheckoutModal
+                                            toggle={this.toggle}
+                                            price={course.course.price}
+                                            courses={[course.course]}
+                                            open={this.state.open}
+                                            trigger={<Button onClick={this.subscribe} style={{ borderRadius: '0px' }} color='linkedin'>Buy Now</Button>} />
+                                        {localStorage.getItem('id') && localStorage.getItem('token') ?
+                                            this.props.cart.cart.findIndex((cart => cart.CourseId === this.props.course.course.course.id)) === -1 ?
+                                                <Button style={{ borderRadius: '0px' }} onClick={this.addToCart} color='linkedin'>Add to Cart</Button> :
+                                                <Button style={{ borderRadius: '0px' }} onClick={this.goToCart} color='linkedin'>Go to Cart</Button> : null}
+                                    </div>
                                     :
                                     (
                                         <div>
@@ -138,10 +161,10 @@ class Course extends Component {
 
 
 const mapState = (state) => {
-    let { course, data, subbedCourses } = state.course;
-    let { chapter } = state;
+    let { course, subbedCourses } = state.course;
+    let { chapter, cart } = state;
     return {
-        course, data, subbedCourses, chapter
+        course, subbedCourses, chapter, cart
     }
 }
 
@@ -152,7 +175,9 @@ const mapDispatch = (dispatch) => {
         getSubscribeCourses: bindActionCreators(courseActions.getSubscribeCourses, dispatch),
         deleteCourse: bindActionCreators(courseActions.deleteCourseAction, dispatch),
         rateCourse: bindActionCreators(courseActions.rateCourseAction, dispatch),
-        getChapters: bindActionCreators(chapterActions.getChaptersAction, dispatch)
+        getChapters: bindActionCreators(chapterActions.getChaptersAction, dispatch),
+        getCart: bindActionCreators(cartActions.getCartAction, dispatch),
+        addToCart: bindActionCreators(cartActions.addToCartAction, dispatch)
     }
 }
 
