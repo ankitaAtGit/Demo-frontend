@@ -26,6 +26,7 @@ class EditProfile extends Component {
                 this.setState({
                     firstName: this.props.user.firstName,
                     lastName: this.props.user.lastName,
+                    picture: this.props.user.picture,
                     displayPic: this.props.user.picture ? imgPath + this.props.user.picture : ''
                 })
             });
@@ -59,9 +60,7 @@ class EditProfile extends Component {
             data.append('firstName', firstName)
             data.append('lastName', lastName)
             data.append('picture', this.state.picture)
-            this.props.editUser(this.props.id, { firstName, lastName }, data, config).then(() => {
-                this.setState({ firstName: '', lastName: '', submitted: false, picture: [], displayPic: '' })
-            })
+            this.props.editUser(this.props.id, { firstName, lastName }, data, config)
         }
     }
     render() {

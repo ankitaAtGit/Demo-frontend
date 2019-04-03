@@ -2,12 +2,14 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'react-router-dom'
-import { Header, Button, Confirm, Icon, Rating, Accordion } from 'semantic-ui-react';
+import { Header, Button, Confirm, Icon, Rating, Accordion, Table } from 'semantic-ui-react';
+// import FileViewer from 'react-file-viewer';
 
 import * as courseActions from '../../../actions/course.actions';
 import * as chapterActions from '../../../actions/chapter.actions';
 import * as cartActions from '../../../actions/cart.actions'
 import CheckoutModal from '../../checkout/checkout';
+// import { filePath } from '../../../constants/path';
 
 class Course extends Component {
     state = {
@@ -54,6 +56,9 @@ class Course extends Component {
             this.props.history.push('/mycourses')
         })
     }
+    // getExtension = (file) => {
+    //     return file.split('.')[1]
+    // }
     goToCart = () => {
         this.props.history.push('/cart')
     }
@@ -136,21 +141,33 @@ class Course extends Component {
                         </div>
                         <div style={{ marginLeft: '200px', marginTop: '30px' }}>
                             <Header>Course Content</Header>
-                            {this.props.chapter.chapters.length > 0 ?
-                                <Accordion styled style={{ width: '850px' }}>
-                                    {this.props.chapter.chapters.map((chapter, i) => {
-                                        return (
-                                            <div key={i}>
-                                                <Accordion.Title active={this.state.activeIndex === i} onClick={(e, { index }) => this.setState(oldState => ({ activeIndex: oldState.activeIndex === index ? -1 : index }))} index={i}>
-                                                    <Header size='medium'>{chapter.chapter_title}</Header>
-                                                </Accordion.Title>
-                                                <Accordion.Content active={this.state.activeIndex === i}>hvfdjgt</Accordion.Content>
-                                            </div>
-                                        )
-                                    })}
-
-                                </Accordion>
-                                : null}
+                            {this.props.chapter.chapters.length > 0 ? <Accordion styled style={{ width: '800px' }}>
+                                {this.props.chapter.chapters.map((chapter, i) => {
+                                    return (
+                                        <div key={i}>
+                                            <Accordion.Title active={this.state.activeIndex === i} onClick={(e, { index }) => this.setState(oldState => ({ activeIndex: oldState.activeIndex === index ? -1 : index }))} index={i}>
+                                                <div style={{ display: 'flex' }}>
+                                                    <div style={{ width: '50%' }}>
+                                                        <Header size='medium'>{chapter.chapter_title}</Header>
+                                                    </div>
+                                                </div>
+                                                <hr />
+                                            </Accordion.Title>
+                                            {JSON.parse(chapter.chapter_files).length > 0 ? <Accordion.Content active={this.state.activeIndex === i}>
+                                                <Table>
+                                                    <Table.Body>
+                                                        {JSON.parse(chapter.chapter_files).map((file, i) => {
+                                                            return <Table.Row key={i}>
+                                                                <Table.Cell textAlign='left'>{file}</Table.Cell>
+                                                            </Table.Row>
+                                                        })}
+                                                    </Table.Body>
+                                                </Table>
+                                            </Accordion.Content> : null}
+                                        </div>
+                                    )
+                                })}
+                            </Accordion> : null}
                         </div>
                     </div>)
                 }

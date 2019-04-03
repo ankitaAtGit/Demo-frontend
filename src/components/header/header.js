@@ -15,11 +15,17 @@ class Header extends Component {
         query: ''
     }
 
-    componentWillMount = () => {
+    componentWillMount() {
         this.props.getCategoriesAction();
         if (localStorage.getItem('token') && localStorage.getItem('id')) {
             this.props.countCart(Number(localStorage.getItem('id')))
         }
+    }
+    componentWillReceiveProps(newProps) {
+        if (newProps.auth.id !== this.props.auth.id)
+            if (localStorage.getItem('token') && localStorage.getItem('id')) {
+                this.props.countCart(Number(localStorage.getItem('id')))
+            }
     }
     handleSignInClick = () => {
         this.props.history.push('/sign-in')

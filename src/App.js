@@ -22,20 +22,22 @@ class App extends Component {
         <Provider store={store}>
           <Router>
             <Header />
-            <Switch>
-              <Route path='/chapters/:id' component={CourseChapters} />
-              <Route path='/sign-in' component={Login} />
-              <Route path='/home' component={Dashboard} />
-              <Route path='/profile' component={UserProfile} />
-              <Route path='/course/details/:id' component={Course} />
-              <Route path='/course' component={Courses} />
-              <Route path='/sign-up' component={SignUp} />
-              <Route path='/new-course' component={AddCourse} />
-              <Route path='/edit-course/:id' component={AddCourse} />
-              <Route path='/mycourses' component={UserCourses} />
-              <Route path='/cart' component={Cart} />
-              <Route path='/' component={Dashboard} />
-            </Switch>
+            <div style={{ position: "fixed", width: '100%' }}>
+              <Switch>
+                <Route path='/chapters/:id' component={CourseChapters} />
+                <Route path='/sign-in' component={Login} />
+                <Route path='/home' component={Dashboard} />
+                <Route path='/profile' component={UserProfile} />
+                <Route path='/course/details/:id' component={Course} />
+                <Route path='/course' component={Courses} />
+                <Route path='/sign-up' component={SignUp} />
+                <Route path='/new-course' component={AddCourse} />
+                <Route path='/edit-course/:id' component={AddCourse} />
+                <Route path='/mycourses' component={UserCourses} />
+                <Route path='/cart' component={Cart} />
+                <Route path='/' component={Dashboard} />
+              </Switch>
+            </div>
           </Router>
         </Provider>
       </div>
