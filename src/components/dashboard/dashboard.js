@@ -23,7 +23,7 @@ class Dashboard extends Component {
 
 const mapState = (state) => {
     return {
-        courses: state.course.courses
+        courses: state.course.allCourses
     }
 }
 

@@ -98,18 +98,20 @@ export const getCourseById = (id) => {
     }
 }
 
-export const subscribeCourse = (data) => {
+export const subscribeCourse = (data, course) => {
     return (dispatch) => {
         return services.subscribeCourse(data).then(response => {
             if (response.status === 200) {
                 dispatch({
                     type: types.SUBSCRIBE_COURSE_SUCCESS,
-                    data: response.data
+                    data: response.data,
+                    course
                 })
 
             }
         }).catch(err => {
             if (err.response) {
+                // console.log(err.response.data.error)
                 dispatch({
                     type: types.SUBSCRIBE_COURSE_FAIL,
                     error: "Failed"
@@ -173,7 +175,7 @@ export const deleteCourseAction = (id) => {
             if (err.response) {
                 dispatch({
                     type: types.DELETE_COURSE_FAIL,
-                    error: "Failed"
+                    error: err.response.data
                 })
             }
         })
@@ -196,26 +198,6 @@ export const rateCourseAction = (id, rating) => {
                 dispatch({
                     type: types.RATE_COURSE_FAIL,
                     error: "Failed"
-                })
-            }
-        })
-    }
-}
-
-export const searchCourseAction = (query) => {
-    return (dispatch) => {
-        return services.searchCourseService(query).then(response => {
-            if (response.status === 200) {
-                dispatch({
-                    type: types.SEARCH_COURSES_SUCCESS,
-                    courses: response.data
-                })
-            }
-        }).catch(err => {
-            if (err.response) {
-                dispatch({
-                    type: types.SEARCH_COURSES_FAIL,
-                    error: err.response.data.error
                 })
             }
         })

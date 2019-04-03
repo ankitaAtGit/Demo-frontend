@@ -60,12 +60,13 @@ class EditProfile extends Component {
             data.append('firstName', firstName)
             data.append('lastName', lastName)
             data.append('picture', this.state.picture)
+            data.append('email', this.props.user.email)
             this.props.editUser(this.props.id, { firstName, lastName }, data, config)
         }
     }
     render() {
         return (
-            <div style={{ margin: 'auto', width: '30%', padding: '15px', boxShadow: '2px 3px 2px 2px lightgrey' }}>
+            <div style={{ margin: 'auto', marginTop: '40px', width: '30%', padding: '15px', boxShadow: '2px 3px 2px 2px lightgrey' }}>
                 <Form>
                     <Form.Field>
                         <label>First Name</label>

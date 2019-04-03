@@ -57,7 +57,7 @@ class CourseChapters extends Component {
     }
     render() {
         return (
-            <div style={{ margin: 'auto', width: '50%' }}>
+            <div style={{ margin: 'auto', width: '50%', marginTop: "15px" }}>
                 <div style={{ boxShadow: '2px 3px 2px 2px lightgrey', padding: '15px', marginBottom: '15px' }}>
                     <Form>
                         <Form.Field>

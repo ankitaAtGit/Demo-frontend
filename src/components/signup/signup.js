@@ -89,7 +89,10 @@ class SignUp extends Component {
         return (
             <div style={{ marginTop: '15px' }} >
                 <div style={{ margin: 'auto', width: '30%', marginBottom: '20px' }}>
-                    <Message style={{ textAlign: 'center' }} hidden={!this.state.showSuccess} color='green'>Signed up successfully</Message>
+                    <Message style={{ textAlign: 'center' }} hidden={!this.state.showSuccess} color='green'>
+                        <Icon color='green' size='big' loading name='spinner' />
+                        Signed up successfully
+                    </Message>
                 </div>
                 <div style={{ margin: 'auto', width: '40%', padding: '15px', boxShadow: '2px 3px 2px 2px lightgrey' }}>
                     <Form>
@@ -127,7 +130,7 @@ class SignUp extends Component {
                             <label>Upload your profile picture</label>
                             {
                                 this.state.displayPic === '' ? < ImageUploader
-                                    withIcon={false}
+                                    withIcon={true}
                                     name='picture'
                                     buttonText='Choose images'
                                     onChange={this.onDrop}

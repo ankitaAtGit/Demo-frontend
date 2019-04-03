@@ -1,6 +1,7 @@
 import * as types from '../constants/action.constants'
 
 const initState = {
+    allCourses: [],
     error: '',
     courses: [],
     course: {},
@@ -22,9 +23,9 @@ export default (state = initState, action) => {
             return Object.assign({}, state, { error: action.error, courses: [] })
 
         case types.GET_ALL_COURSES_SUCCESS:
-            return Object.assign({}, state, { error: '', courses: [...action.courses] })
+            return Object.assign({}, state, { error: '', allCourses: [...action.courses] })
         case types.GET_ALL_COURSES_FAIL:
-            return Object.assign({}, state, { error: action.error, courses: [] })
+            return Object.assign({}, state, { error: action.error })
 
         case types.GET_COURSE_BY_ID_SUCCESS:
             return Object.assign({}, state, { error: '', course: { ...action.course } })
@@ -37,9 +38,10 @@ export default (state = initState, action) => {
             return Object.assign({}, state, { error: action.error })
 
         case types.SUBSCRIBE_COURSE_SUCCESS:
-            let { subbedCourses } = state;
+            let { subbedCourses, subCourseDetails } = state;
             subbedCourses.push(action.data)
-            return Object.assign({}, state, { error: '', subbedCourses: [...subbedCourses] })
+            subCourseDetails.push(action.course)
+            return Object.assign({}, state, { error: '', subbedCourses: [...subbedCourses], subCourseDetails: [...subCourseDetails] })
         case types.SUBSCRIBE_COURSE_FAIL:
             return Object.assign({}, state, { error: action.error, data: {} })
 
@@ -72,11 +74,6 @@ export default (state = initState, action) => {
             return Object.assign({}, state, { error: '', subbedCourses: [...rateCourses], course: { ...course } })
         case types.RATE_COURSE_FAIL:
             return Object.assign({}, state, { error: action.error, course: {} })
-
-        case types.SEARCH_COURSES_SUCCESS:
-            return Object.assign({}, state, { searchedCourses: action.courses })
-        case types.SEARCH_COURSES_FAIL:
-            return Object.assign({}, state, { error: action.error })
 
         default:
             return state;

@@ -16,6 +16,9 @@ class Header extends Component {
     }
 
     componentWillMount() {
+        if (this.props.course.allCourses.length === 0) {
+            this.props.getAllCourses();
+        }
         this.props.getCategoriesAction();
         if (localStorage.getItem('token') && localStorage.getItem('id')) {
             this.props.countCart(Number(localStorage.getItem('id')))
@@ -46,10 +49,17 @@ class Header extends Component {
     }
     searchCourse = (e, { value }) => {
         this.setState({ query: value })
-        if (value !== '')
-            this.props.searchCourse(value).then(() => {
-                this.setState({ searchResults: this.props.course.searchedCourses.map(res => ({ title: res.course_name, description: res.course_description, id: res.id })) })
-            });
+        const results = [];
+        if (value !== '') {
+            const query = new RegExp(`^${value}+([a-z|A-z|0-9|/ ])*$`, 'ig')
+            this.props.course.allCourses.map((course) => {
+                if (course.course_name.match(query)) {
+                    results.push({ key: course.id, title: course.course_name, description: course.course_description, id: course.id })
+                }
+                return true
+            })
+            this.setState({ searchResults: results })
+        }
     }
     render() {
         return (
@@ -139,8 +149,8 @@ const mapDispatch = (dispatch) => {
     return {
         signOutAction: bindActionCreators(authActions.signOutAction, dispatch),
         getCategoriesAction: bindActionCreators(categoryActions.getCategoriesAction, dispatch),
-        searchCourse: bindActionCreators(courseActions.searchCourseAction, dispatch),
-        countCart: bindActionCreators(cartActions.countCartAction, dispatch)
+        countCart: bindActionCreators(cartActions.countCartAction, dispatch),
+        getAllCourses: bindActionCreators(courseActions.getAllCourses, dispatch)
     }
 }
 export default withRouter(connect(mapState, mapDispatch)(Header));

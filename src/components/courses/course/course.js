@@ -18,15 +18,16 @@ class Course extends Component {
         subbedCourses: [],
         hover: false,
         activeIndex: -1,
-        open: false
+        open: false,
+        showError: false
     }
     componentWillMount() {
         if (localStorage.getItem('id') && localStorage.getItem('token')) {
             this.props.getCart(Number(localStorage.getItem('id')))
             this.props.getSubscribeCourses(Number(localStorage.getItem('id'))).then(() => {
-                let i = this.props.subbedCourses.findIndex(course => course.CourseId === Number(this.props.match.params.id));
+                let i = this.props.course.subbedCourses.findIndex(course => course.CourseId === Number(this.props.match.params.id));
                 if (i !== -1)
-                    this.setState({ course_rating: this.props.subbedCourses[i].course_rating, subbedCourses: this.props.subbedCourses })
+                    this.setState({ course_rating: this.props.course.subbedCourses[i].course_rating, subbedCourses: this.props.course.subbedCourses })
             })
         }
         this.props.getCourseById(Number(this.props.match.params.id))
@@ -36,29 +37,35 @@ class Course extends Component {
         if (newProps.match.params.id !== this.props.match.params.id) {
             if (localStorage.getItem('id') && localStorage.getItem('token')) {
                 this.props.getSubscribeCourses(Number(localStorage.getItem('id'))).then(() => {
-                    let i = newProps.subbedCourses.findIndex(course => course.CourseId === Number(newProps.match.params.id));
+                    let i = newProps.course.subbedCourses.findIndex(course => course.CourseId === Number(newProps.match.params.id));
                     if (i !== -1)
-                        this.setState({ course_rating: newProps.subbedCourses[i].course_rating, subbedCourses: newProps.subbedCourses })
+                        this.setState({ course_rating: newProps.course.subbedCourses[i].course_rating, subbedCourses: newProps.course.subbedCourses })
                 })
             }
             this.props.getCourseById(Number(newProps.match.params.id))
             this.props.getChapters(Number(newProps.match.params.id))
         }
-        if (newProps.subbedCourses !== this.props.subbedCourses) {
-            this.setState({ subbedCourses: newProps.subbedCourses })
+        if (newProps.course.subbedCourses !== this.props.course.subbedCourses) {
+            this.setState({ subbedCourses: newProps.course.subbedCourses })
         }
     }
     toggleConfirm = () => {
-        this.setState(oldState => ({ showConfirm: !oldState.showConfirm }));
+        this.setState(oldState => ({ showConfirm: !oldState.showConfirm, showError: false }));
     }
     handleDelete = () => {
         this.props.deleteCourse(Number(this.props.match.params.id)).then(() => {
-            this.props.history.push('/mycourses')
+            if (this.props.course.error === '') {
+                this.props.history.push('/mycourses')
+            }
+            else {
+                this.setState({
+                    showError: true
+                })
+                // this.toggleConfirm();
+            }
+
         })
     }
-    // getExtension = (file) => {
-    //     return file.split('.')[1]
-    // }
     goToCart = () => {
         this.props.history.push('/cart')
     }
@@ -74,29 +81,29 @@ class Course extends Component {
     }
     rateCourse = (event, { rating }) => {
         this.setState({ course_rating: rating })
-        this.props.rateCourse(this.props.course.course.course.id, { UserId: Number(localStorage.getItem('id')), course_rating: rating })
+        this.props.rateCourse(this.props.course.id, { UserId: Number(localStorage.getItem('id')), course_rating: rating })
     }
     addToCart = () => {
-        this.props.addToCart({ UserId: Number(localStorage.getItem('id')), CourseId: this.props.course.course.course.id })
+        this.props.addToCart({ UserId: Number(localStorage.getItem('id')), CourseId: this.props.course.course.id })
     }
     editCourse = () => {
-        this.props.history.push(`/edit-course/${this.props.course.course.course.id}`)
+        this.props.history.push(`/edit-course/${this.props.course.course.id}`)
     }
     render() {
         let { course } = this.props.course;
         return (
             <div>
-                {!course ? null :
+                {!course.author ? null :
                     (<div style={{ display: 'flex' }}>
                         <div style={{ textAlign: 'center', padding: '26px', height: window.outerHeight, width: '300px', boxShadow: "2px 5px 5px grey" }}>
-                            <Header size='medium'>{course.course.course_name}</Header>
+                            <Header size='medium'>{course.course_name}</Header>
                             <div style={{ margin: 'auto', width: '19%' }}>
                                 <div style={{ color: 'white', height: 'fit-content', padding: '7px', backgroundColor: '#fc0', borderRadius: '5px', width: 'fit-content' }}>
-                                    {course.course.course_rating} <Icon name='star' inverted />
+                                    {course.course_rating} <Icon name='star' inverted />
                                 </div>
                             </div>
-                            <Header size='small'>{course.course.course_description}</Header>
-                            {course.course.price > 0 ? <Header size='small'>Learn for {course.course.price}/-</Header>
+                            <Header size='small'>{course.course_description}</Header>
+                            {course.price > 0 ? <Header size='small'>Learn for {course.price}/-</Header>
                                 : <Header size='small'>Free</Header>}
                             <p>by {course.author.firstName} {course.author.lastName}</p>
 
@@ -109,24 +116,33 @@ class Course extends Component {
                                     <Confirm
                                         open={this.state.showConfirm}
                                         size='mini'
-                                        header={<Header size='small'><Icon name='warning sign' color='yellow' />Are you sure you want to delete this course?</Header>}
-                                        content='This action cannot be reversed.'
+                                        content={
+                                            this.state.showError ? < Header size='tiny' color='red'>
+                                                {this.props.course.error}
+                                            </Header> : null
+                                        }
+                                        header={
+                                            <Header size='small'>
+                                                <Icon name='warning sign' color='yellow' />Are you sure you want to delete this course?
+                                            </Header>
+                                        }
                                         confirmButton='Yes'
-                                        cancelButton='No'
+                                        cancelButton='Cancel'
                                         onCancel={this.toggleConfirm}
                                         onConfirm={this.handleDelete}
-                                    />
+                                    >
+                                    </Confirm>
                                 </div> :
-                                this.state.subbedCourses.findIndex((course) => course.CourseId === this.props.course.course.course.id) === -1 ?
+                                this.state.subbedCourses.findIndex((course) => course.CourseId === this.props.course.course.id) === -1 ?
                                     <div>
                                         <CheckoutModal
                                             toggle={this.toggle}
-                                            price={course.course.price}
-                                            courses={[course.course]}
+                                            price={course.price}
+                                            courses={[course]}
                                             open={this.state.open}
                                             trigger={<Button onClick={this.subscribe} style={{ borderRadius: '0px' }} color='linkedin'>Buy Now</Button>} />
                                         {localStorage.getItem('id') && localStorage.getItem('token') ?
-                                            this.props.cart.cart.findIndex((cart => cart.CourseId === this.props.course.course.course.id)) === -1 ?
+                                            this.props.cart.cart.findIndex((cart => cart.CourseId === course.id)) === -1 ?
                                                 <Button style={{ borderRadius: '0px' }} onClick={this.addToCart} color='linkedin'>Add to Cart</Button> :
                                                 <Button style={{ borderRadius: '0px' }} onClick={this.goToCart} color='linkedin'>Go to Cart</Button> : null}
                                     </div>
@@ -169,7 +185,7 @@ class Course extends Component {
                                 })}
                             </Accordion> : null}
                         </div>
-                    </div>)
+                    </div >)
                 }
             </div >
         )
@@ -178,10 +194,9 @@ class Course extends Component {
 
 
 const mapState = (state) => {
-    let { course, subbedCourses } = state.course;
-    let { chapter, cart } = state;
+    let { course, chapter, cart } = state;
     return {
-        course, subbedCourses, chapter, cart
+        course, chapter, cart
     }
 }
 

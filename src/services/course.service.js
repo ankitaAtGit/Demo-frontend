@@ -1,5 +1,5 @@
 import baseService from './baseService';
-
+import { config } from '../constants/config'
 export const getCourseByCatId = (id) => {
     return baseService.get(`/course/category/courses/${id}`);
 }
@@ -13,7 +13,7 @@ export const getAllCourses = () => {
 }
 
 export const createCourseService = (course) => {
-    return baseService.post(`/course/new/course`, course)
+    return baseService.post(`/course/new/course`, course, config)
 }
 
 export const getCourseById = (id) => {
@@ -38,8 +38,4 @@ export const deleteCourseService = (id) => {
 
 export const rateCourseService = (id, rating) => {
     return baseService.put(`/sub/course-user/rate/${id}`, rating);
-}
-
-export const searchCourseService = (query) => {
-    return baseService.get(`/course/search/${query}`)
 }

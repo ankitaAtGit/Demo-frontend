@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Modal, Button, Header, List } from 'semantic-ui-react'
+import { Modal, Button, Header, List, Message, Icon } from 'semantic-ui-react'
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux'
 
@@ -7,21 +7,30 @@ import * as courseActions from '../../actions/course.actions';
 import * as cartActions from '../../actions/cart.actions';
 
 class CheckoutModal extends Component {
+    state = {
+        showSuccess: false
+    }
     subscribe = () => {
         this.props.courses.map(course => {
-            this.props.subscribeCourse({ CourseId: course.id, UserId: Number(localStorage.getItem('id')) }).then(() => {
+            this.props.subscribeCourse({ CourseId: course.id, UserId: Number(localStorage.getItem('id')) }, course).then(() => {
                 if (this.props.course.error === '') {
+                    this.setState({ showSuccess: true })
                     this.props.removeCart(Number(localStorage.getItem('id')), course.id)
+                    setTimeout(() => this.props.toggle(), 2000)
                 }
             })
             return true
         })
-        this.props.toggle();
     }
+
     render() {
         return (
             <Modal style={{ borderRadius: '0px' }} size='tiny' trigger={this.props.trigger} open={this.props.open} onClose={this.props.toggle}>
                 <div style={{ padding: '22px' }}>
+                    <Message style={{ textAlign: 'center' }} hidden={!this.state.showSuccess} color='green'>
+                        <Icon color='green' size='big' loading name='spinner' />
+                        Subscribed successfully
+                    </Message>
                     <Header>You are purchasing</Header>
                     <List divided relaxed>
                         {

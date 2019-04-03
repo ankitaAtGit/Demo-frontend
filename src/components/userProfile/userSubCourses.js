@@ -20,7 +20,7 @@ class UserSubCourses extends Component {
             <div style={{ margin: '30px', width: '100%' }}>
                 <Header textAlign='center'>Subscribed Courses</Header>
                 <hr />
-                <br/>
+                <br />
                 <CourseCards courses={this.props.courses} selectCourse={this.selectCourse} />
             </div >
         )

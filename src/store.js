@@ -23,6 +23,7 @@ const initState = {
         error: '',
     },
     course: {
+        allCourses: [],
         error: '',
         course: {},
         courses: [],

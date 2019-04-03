@@ -24,13 +24,13 @@ class AddCourse extends Component {
         if (this.props.match.params.id) {
             this.props.getCourseById(Number(this.props.match.params.id)).then(() => {
                 if (this.props.course)
-                    if (Number(localStorage.getItem('id')) === this.props.course.course.course.UserId)
+                    if (Number(localStorage.getItem('id')) === this.props.course.course.UserId)
                         this.setState({
-                            course_name: this.props.course.course.course.course_name,
-                            course_description: this.props.course.course.course.course_description,
-                            CategoryId: this.props.course.course.course.CategoryId,
-                            UserId: this.props.course.course.course.UserId,
-                            price: this.props.course.course.course.price
+                            course_name: this.props.course.course.course_name,
+                            course_description: this.props.course.course.course_description,
+                            CategoryId: this.props.course.course.CategoryId,
+                            UserId: this.props.course.course.UserId,
+                            price: this.props.course.course.price
                         })
                     else
                         this.props.history.replace('/sign-in')
@@ -51,7 +51,8 @@ class AddCourse extends Component {
             else
                 this.props.createCourse({ course_name, course_description, CategoryId, UserId, price }).then(() => {
                     this.setState({ course_name: '', course_description: '', CategoryId: 0, price: '', submitted: false })
-                    this.props.history.push(`/chapters/${this.props.course.id}`)
+                    if (this.props.course.error === '')
+                        this.props.history.push(`/chapters/${this.props.course.course.id}`)
                 });
         }
     }
@@ -70,7 +71,7 @@ class AddCourse extends Component {
     }
     render() {
         return (
-            <div style={{ margin: 'auto', width: '50%', boxShadow: '2px 3px 2px 2px lightgrey', padding: '15px' }}>
+            <div style={{ margin: 'auto', marginTop: '20px', width: '50%', boxShadow: '2px 3px 2px 2px lightgrey', padding: '15px' }}>
                 <Form>
                     <Form.Field>
                         <label>What would you like to name this course?*</label>
@@ -119,7 +120,7 @@ class AddCourse extends Component {
 const mapState = (state) => {
     return {
         category: state.category,
-        course: state.course.course
+        course: state.course
     }
 }
 const mapDispatch = (dispatch) => {

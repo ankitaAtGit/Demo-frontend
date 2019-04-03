@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Button, Form, Input, Header, Label, Message } from 'semantic-ui-react'
+import { Button, Form, Input, Header, Label, Message, Icon } from 'semantic-ui-react'
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter, Link } from 'react-router-dom';
@@ -44,7 +44,10 @@ class Login extends Component {
         return (
             <div style={{ margin: 'auto', width: '50%', marginTop: '20px' }}>
                 <div style={{ margin: 'auto', width: '50%', marginBottom: '20px' }}>
-                    <Message style={{ textAlign: 'center' }} hidden={!this.state.showSuccess} color='green'>Signed in successfully</Message>
+                    <Message style={{ textAlign: 'center' }} hidden={!this.state.showSuccess} color='green'>
+                        <Icon color='green' size='big' loading name='spinner' />
+                        Signed in successfully
+                    </Message>
                 </div>
                 <div style={{ margin: 'auto', width: '60%', padding: '15px', boxShadow: '2px 3px 2px 2px lightgrey' }}>
                     <Form>
