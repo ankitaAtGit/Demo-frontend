@@ -23,7 +23,7 @@ class UserProfile extends Component {
         return (
             <div style={{ display: 'flex' }}>
                 <div style={{
-                    textAlign: 'center', padding: '12px', height: window.innerHeight, width: '300px', boxShadow: "2px 5px 5px grey"
+                    textAlign: 'center', padding: '12px', height: window.innerHeight, width: '400px', boxShadow: "2px 5px 5px grey"
                 }
                 }>
                     {

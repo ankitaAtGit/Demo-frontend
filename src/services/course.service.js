@@ -1,5 +1,5 @@
 import baseService from './baseService';
-import { config } from '../constants/config'
+
 export const getCourseByCatId = (id) => {
     return baseService.get(`/course/category/courses/${id}`);
 }
@@ -13,6 +13,11 @@ export const getAllCourses = () => {
 }
 
 export const createCourseService = (course) => {
+    const config = {
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+    }
     return baseService.post(`/course/new/course`, course, config)
 }
 
@@ -21,21 +26,46 @@ export const getCourseById = (id) => {
 }
 
 export const subscribeCourse = (data) => {
-    return baseService.post(`/sub/course-user/new`, data);
+    const config = {
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+    }
+    return baseService.post(`/sub/course-user/new`, data, config);
 }
 
 export const getSubscribeCourses = (id) => {
-    return baseService.get(`/sub/course-user/all/user/course/${id}`);
+    const config = {
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+    }
+    return baseService.get(`/sub/course-user/all/user/course/${id}`, config);
 }
 
 export const editCourseService = (id, course) => {
-    return baseService.put(`/course/edit/course/${id}`, course);
+    const config = {
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+    }
+    return baseService.put(`/course/edit/course/${id}`, course, config);
 }
 
 export const deleteCourseService = (id) => {
-    return baseService.delete(`/course/delete/${id}`);
+    const config = {
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+    }
+    return baseService.delete(`/course/delete/${id}`, config);
 }
 
 export const rateCourseService = (id, rating) => {
-    return baseService.put(`/sub/course-user/rate/${id}`, rating);
+    const config = {
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+    }
+    return baseService.put(`/sub/course-user/rate/${id}`, rating, config);
 }

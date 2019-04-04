@@ -1,7 +1,12 @@
 import baseService from './baseService';
 
 export const addChapterService = (chapter) => {
-    return baseService.post(`/chapter/new`, chapter)
+    const config = {
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+    }
+    return baseService.post(`/chapter/new`, chapter, config)
 }
 
 export const getChapterByCourse = (id) => {
@@ -9,9 +14,19 @@ export const getChapterByCourse = (id) => {
 }
 
 export const deleteChapterService = (id) => {
-    return baseService.delete(`/chapter/${id}`)
+    const config = {
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+    }
+    return baseService.delete(`/chapter/${id}`, config)
 }
 
 export const deleteFileService = (file, id) => {
-    return baseService.delete(`/chapter/id/${id}/file/${file}`)
+    const config = {
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+    }
+    return baseService.delete(`/chapter/id/${id}/file/${file}`, config)
 }

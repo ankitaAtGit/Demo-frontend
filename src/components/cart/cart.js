@@ -10,7 +10,8 @@ import CheckoutModal from '../checkout/checkout'
 class Cart extends Component {
     state = {
         open: false,
-        price: ''
+        price: '',
+        showSuccess: false
     }
     componentWillMount() {
         this.props.getCart(Number(localStorage.getItem('id'))).then(() => {
@@ -29,7 +30,7 @@ class Cart extends Component {
         return (
             <div style={{ margin: '40px' }}>
                 {this.props.cart.cart.length > 0 ?
-                    <div >
+                    <div>
                         <Item.Group>
                             {
                                 this.props.cart.courseData.map((course, i) => {
@@ -84,7 +85,7 @@ class Cart extends Component {
                             </CheckoutModal>
                         </div>
                     </div> :
-                    <Header>Your cart is empty. Keep shopping</Header>}
+                    <Header >Your cart is empty. Keep shopping</Header>}
             </div>
         )
     }

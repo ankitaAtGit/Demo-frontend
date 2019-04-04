@@ -55,7 +55,7 @@ export const countCartAction = (userId) => {
             if (err.response) {
                 dispatch({
                     type: types.COUNT_CART_FAIL,
-                    error: err.response.data.error
+                    error: err.response.data
                 })
             }
         })

@@ -66,39 +66,41 @@ class EditProfile extends Component {
     }
     render() {
         return (
-            <div style={{ margin: 'auto', marginTop: '40px', width: '30%', padding: '15px', boxShadow: '2px 3px 2px 2px lightgrey' }}>
-                <Form>
-                    <Form.Field>
-                        <label>First Name</label>
-                        <Input type='text' value={this.state.firstName} onChange={(e) => this.setState({ firstName: e.target.value, submitted: false })} />
-                        {this.state.submitted && this.state.firstName === '' ? <Label color='red' pointing basic>Please enter your first name</Label> : null}
-                    </Form.Field>
-                    <Form.Field>
-                        <label>Last Name</label>
-                        <Input type='text' value={this.state.lastName} onChange={(e) => this.setState({ lastName: e.target.value, submitted: false })} />
-                        {this.state.submitted && this.state.lastName === '' ? <Label color='red' pointing basic>Please enter your last name</Label> : null}
-                    </Form.Field>
-                    <Form.Field>
-                        <label>Upload your profile picture</label>
-                        {
-                            this.state.displayPic === '' ? < ImageUploader
-                                withIcon={true}
-                                name='picture'
-                                buttonText='Choose images'
-                                onChange={this.onDrop}
-                                imgExtension={['.jpg', '.gif', '.png', '.gif']}
-                                singleImage={true} accept={"image/*"}
-                                maxFileSize={5242880} /> :
-                                <div style={{ textAlign: 'center' }}>
-                                    <div className="profile-pic">
-                                        <Image src={this.state.displayPic} size='small' alt='' />
-                                        <div className="edit"><Icon style={{ cursor: "pointer" }} onClick={this.removeImage} name='remove circle' color='red' /></div>
+            <div style={{ width: '100%' }}>
+                <div style={{ margin: 'auto', marginTop: '40px', width: '40%', padding: '15px', boxShadow: '2px 3px 2px 2px lightgrey' }}>
+                    <Form>
+                        <Form.Field>
+                            <label>First Name</label>
+                            <Input type='text' value={this.state.firstName} onChange={(e) => this.setState({ firstName: e.target.value, submitted: false })} />
+                            {this.state.submitted && this.state.firstName === '' ? <Label color='red' pointing basic>Please enter your first name</Label> : null}
+                        </Form.Field>
+                        <Form.Field>
+                            <label>Last Name</label>
+                            <Input type='text' value={this.state.lastName} onChange={(e) => this.setState({ lastName: e.target.value, submitted: false })} />
+                            {this.state.submitted && this.state.lastName === '' ? <Label color='red' pointing basic>Please enter your last name</Label> : null}
+                        </Form.Field>
+                        <Form.Field>
+                            <label>Upload your profile picture</label>
+                            {
+                                this.state.displayPic === '' ? < ImageUploader
+                                    withIcon={true}
+                                    name='picture'
+                                    buttonText='Choose images'
+                                    onChange={this.onDrop}
+                                    imgExtension={['.jpg', '.gif', '.png', '.gif']}
+                                    singleImage={true} accept={"image/*"}
+                                    maxFileSize={5242880} /> :
+                                    <div style={{ textAlign: 'center' }}>
+                                        <div className="profile-pic">
+                                            <Image src={this.state.displayPic} size='small' alt='' />
+                                            <div className="edit"><Icon style={{ cursor: "pointer" }} onClick={this.removeImage} name='remove circle' color='red' /></div>
+                                        </div>
                                     </div>
-                                </div>
-                        }
-                    </Form.Field>
-                    <Button color='linkedin' style={{ borderRadius: "0px" }} onClick={this.submit}>Update</Button>
-                </Form>
+                            }
+                        </Form.Field>
+                        <Button color='linkedin' style={{ borderRadius: "0px" }} onClick={this.submit}>Update</Button>
+                    </Form>
+                </div>
             </div>
         )
     }

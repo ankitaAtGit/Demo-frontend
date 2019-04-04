@@ -70,7 +70,7 @@ export default (state = initState, action) => {
             let x = rateCourses.findIndex(course => course.CourseId === CourseId && course.UserId === rating.UserId)
             rateCourses[x].course_rating = rating.course_rating;
             let course = state.course
-            course.course.course.course_rating = avg[0]
+            course.course_rating = avg
             return Object.assign({}, state, { error: '', subbedCourses: [...rateCourses], course: { ...course } })
         case types.RATE_COURSE_FAIL:
             return Object.assign({}, state, { error: action.error, course: {} })

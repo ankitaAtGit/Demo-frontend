@@ -61,9 +61,7 @@ class Course extends Component {
                 this.setState({
                     showError: true
                 })
-                // this.toggleConfirm();
             }
-
         })
     }
     goToCart = () => {
@@ -81,7 +79,7 @@ class Course extends Component {
     }
     rateCourse = (event, { rating }) => {
         this.setState({ course_rating: rating })
-        this.props.rateCourse(this.props.course.id, { UserId: Number(localStorage.getItem('id')), course_rating: rating })
+        this.props.rateCourse(this.props.course.course.id, { UserId: Number(localStorage.getItem('id')), course_rating: rating })
     }
     addToCart = () => {
         this.props.addToCart({ UserId: Number(localStorage.getItem('id')), CourseId: this.props.course.course.id })
@@ -169,12 +167,12 @@ class Course extends Component {
                                                 </div>
                                                 <hr />
                                             </Accordion.Title>
-                                            {JSON.parse(chapter.chapter_files).length > 0 ? <Accordion.Content active={this.state.activeIndex === i}>
+                                            {chapter.ChapterFiles.length > 0 ? <Accordion.Content active={this.state.activeIndex === i}>
                                                 <Table>
                                                     <Table.Body>
-                                                        {JSON.parse(chapter.chapter_files).map((file, i) => {
+                                                        {chapter.ChapterFiles.map((file, i) => {
                                                             return <Table.Row key={i}>
-                                                                <Table.Cell textAlign='left'>{file}</Table.Cell>
+                                                                <Table.Cell textAlign='left'>{file.file_name}</Table.Cell>
                                                             </Table.Row>
                                                         })}
                                                     </Table.Body>

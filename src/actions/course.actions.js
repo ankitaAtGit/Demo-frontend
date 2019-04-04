@@ -111,7 +111,6 @@ export const subscribeCourse = (data, course) => {
             }
         }).catch(err => {
             if (err.response) {
-                // console.log(err.response.data.error)
                 dispatch({
                     type: types.SUBSCRIBE_COURSE_FAIL,
                     error: "Failed"

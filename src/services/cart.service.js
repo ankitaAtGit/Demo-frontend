@@ -1,17 +1,37 @@
 import baseService from './baseService';
 
 export const getCartService = (userId) => {
-    return baseService.get(`/cart/user/${userId}`)
+    const config = {
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+    }
+    return baseService.get(`/cart/user/${userId}`, config)
 }
 
 export const addToCartService = (userCourse) => {
-    return baseService.post(`/cart/user/new`, userCourse)
+    const config = {
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+    }
+    return baseService.post(`/cart/user/new`, userCourse, config)
 }
 
 export const countCartService = (userId) => {
-    return baseService.get(`/cart/count/${userId}`)
+    const config = {
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+    }
+    return baseService.get(`/cart/count/${userId}`, config)
 }
 
 export const removeCartService = (userId, courseId) => {
-    return baseService.delete(`cart/user/${userId}/course/${courseId}`)
+    const config = {
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+    }
+    return baseService.delete(`cart/user/${userId}/course/${courseId}`, config)
 }

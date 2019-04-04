@@ -102,12 +102,12 @@ class CourseChapters extends Component {
                                     </div>
                                     <hr />
                                 </Accordion.Title>
-                                {JSON.parse(chapter.chapter_files).length > 0 ? <Accordion.Content active={this.state.activeIndex === i}>
+                                {chapter.ChapterFiles.length > 0 ? <Accordion.Content active={this.state.activeIndex === i}>
                                     <Table>
                                         <Table.Body>
-                                            {JSON.parse(chapter.chapter_files).map((file, i) => {
+                                            {chapter.ChapterFiles.map((file, i) => {
                                                 return <Table.Row key={i}>
-                                                    <Table.Cell textAlign='left'>{file}</Table.Cell>
+                                                    <Table.Cell textAlign='left'>{file.file_name}</Table.Cell>
                                                     <Table.Cell textAlign='right'>
                                                         <Button size='mini' icon='remove' color='red' onClick={() => this.deleteFile(file, chapter.id)} />
                                                     </Table.Cell>

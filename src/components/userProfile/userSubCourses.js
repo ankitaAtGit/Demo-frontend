@@ -17,7 +17,7 @@ class UserSubCourses extends Component {
     }
     render() {
         return (
-            <div style={{ margin: '30px', width: '100%' }}>
+            <div style={{ width: '100%', marginTop: '20px' }}>
                 <Header textAlign='center'>Subscribed Courses</Header>
                 <hr />
                 <br />
