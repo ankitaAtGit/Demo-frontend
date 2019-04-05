@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import FileUploader from 'react-files';
-import { Form, Input, Button, Table, Icon, Accordion, Header } from 'semantic-ui-react'
+import { Form, Input, Button, Table, Icon, Accordion, Header, Confirm } from 'semantic-ui-react'
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'react-router-dom'
@@ -13,11 +13,18 @@ class CourseChapters extends Component {
         chapterTitle: '',
         chapterFiles: [],
         activeIndex: -1,
-        key: 0
+        key: 0,
+        editing: false,
+        chapterId: 0,
+        currentFiles: [],
+        deleteFileId: [],
+        showConfirm: false
     }
     componentWillMount() {
         this.props.getChapters(Number(this.props.match.params.id))
-
+    }
+    toggleConfirm = () => {
+        this.setState(oldState => ({ showConfirm: !oldState.showConfirm }))
     }
     onFilesChange = (files) => {
         this.setState({ chapterFiles: files })
@@ -43,11 +50,50 @@ class CourseChapters extends Component {
         }
         this.props.addChapter(data, config)
     }
+    editChapter = (chapter) => {
+        this.setState({ chapterTitle: chapter.chapter_title, currentFiles: [...chapter.ChapterFiles], editing: true, chapterId: chapter.id })
+    }
     deleteChapter = (id) => {
         this.props.deleteChapter(id)
+        this.toggleConfirm()
     }
-    deleteFile = (file, id) => {
-        this.props.deleteFile(file, id)
+    updateChapter = () => {
+        let { deleteFileId, chapterId, chapterFiles, chapterTitle } = this.state;
+        if (deleteFileId.length > 0) {
+            deleteFileId.forEach(id => {
+                this.props.deleteFile(id, chapterId)
+            })
+        }
+        let data = new FormData();
+        data.append('chapter_title', chapterTitle);
+        if (chapterFiles.length > 0) {
+            this.state.chapterFiles.forEach(file => {
+                data.append('chapter_files', file);
+            })
+        }
+        data.append('CourseId', Number(this.props.match.params.id))
+        this.setState(oldState => ({
+            chapterTitle: '',
+            chapterFiles: [],
+            key: oldState.key + 1,
+            currentFiles: [],
+            deleteFileId: [],
+            editing: false
+        }))
+        const config = {
+            headers: {
+                'content-type': 'multipart/form-data'
+            }
+        }
+        this.props.editChapter(chapterId, { chapterTitle }, data, config)
+    }
+    deleteFile = (id) => {
+        this.setState(oldState => ({ deleteFileId: [...oldState.deleteFileId, id] }))
+        let { currentFiles } = this.state;
+        let i = currentFiles.findIndex(file => file.id === id)
+        currentFiles.splice(i, 1);
+        this.setState({ currentFiles });
+        // this.props.deleteFile(id, chapterId)
     }
     removeFile = (id) => {
         let { chapterFiles } = this.state;
@@ -67,7 +113,7 @@ class CourseChapters extends Component {
                             <FileUploader key={this.state.key} clickable multiple onChange={this.onFilesChange}>
                                 <Button style={{ borderRadius: '0px' }} color='linkedin' content='Click to upload files' />
                             </FileUploader>
-                            {this.state.chapterFiles.length > 0 ? <Table celled size='small' >
+                            {this.state.chapterFiles.length > 0 || this.state.currentFiles.length > 0 ? <Table celled size='small' >
                                 <Table.Body>
                                     {this.state.chapterFiles.map((file, i) => {
                                         return <Table.Row textAlign='center' key={i}>
@@ -80,12 +126,27 @@ class CourseChapters extends Component {
                                             </Table.Cell>
                                         </Table.Row>
                                     })}
+                                    {this.state.editing ?
+                                        this.state.currentFiles.map((file, i) => {
+                                            return <Table.Row textAlign='center' key={i}>
+                                                <Table.Cell>
+                                                    {file.file_type.match('video') ? <Icon size='big' name='video' /> : <Icon size='big' name='file' />}
+                                                </Table.Cell>
+                                                <Table.Cell>{file.file_name}</Table.Cell>
+                                                <Table.Cell>
+                                                    <Button size='mini' onClick={() => this.deleteFile(file.id)} icon='remove' color='red' />
+                                                </Table.Cell>
+                                            </Table.Row>
+                                        })
+                                        : null}
                                 </Table.Body>
                             </Table> : null}
+
                         </Form.Field>
                         <Form.Field>
-                            <Button type='button' circular icon='plus' color='linkedin' onClick={this.addChapter} />
-                            <Button type='button' style={{ borderRadius: '0px' }} content='Done' color='green' onClick={() => this.props.history.push('/mycourses')} />
+                            {this.state.editing ? <Button type='button' style={{ borderRadius: '0px' }} content='Save Changes' color='linkedin' onClick={this.updateChapter} />
+                                : <Button type='button' style={{ borderRadius: '0px' }} content='Add Chapter' color='linkedin' onClick={this.addChapter} />}
+                            <Button type='button' style={{ borderRadius: '0px' }} content='Done' basic color='linkedin' onClick={() => this.props.history.push(`/course/details/${Number(this.props.match.params.id)}`)} />
                         </Form.Field>
                     </Form>
                 </div>
@@ -98,7 +159,23 @@ class CourseChapters extends Component {
                                         <div style={{ width: '50%' }}>
                                             <Header size='medium'>{chapter.chapter_title}</Header>
                                         </div>
-                                        <Button style={{ marginLeft: '400px' }} icon='remove' color='red' size='mini' onClick={() => this.deleteChapter(chapter.id)} />
+                                        <Button style={{ marginLeft: '400px' }} icon='pencil' color='linkedin' size='mini' onClick={() => this.editChapter(chapter)} />
+                                        <Button icon='remove' basic color='linkedin' size='mini' onClick={this.toggleConfirm} />
+                                        <Confirm
+                                            open={this.state.showConfirm}
+                                            size='mini'
+                                            content={'This will delete all the files in this chapter '}
+                                            header={
+                                                < Header size='small'>
+                                                    <Icon name='warning sign' color='yellow' />Are you sure you want to delete this chapter?
+                                            </Header>
+                                            }
+                                            confirmButton='Yes'
+                                            cancelButton='Cancel'
+                                            onCancel={this.toggleConfirm}
+                                            onConfirm={() => this.deleteChapter(chapter.id)}
+                                        >
+                                        </Confirm>
                                     </div>
                                     <hr />
                                 </Accordion.Title>
@@ -108,9 +185,6 @@ class CourseChapters extends Component {
                                             {chapter.ChapterFiles.map((file, i) => {
                                                 return <Table.Row key={i}>
                                                     <Table.Cell textAlign='left'>{file.file_name}</Table.Cell>
-                                                    <Table.Cell textAlign='right'>
-                                                        <Button size='mini' icon='remove' color='red' onClick={() => this.deleteFile(file, chapter.id)} />
-                                                    </Table.Cell>
                                                 </Table.Row>
                                             })}
                                         </Table.Body>
@@ -119,7 +193,8 @@ class CourseChapters extends Component {
                             </div>
                         )
                     })}
-                </Accordion> : null}
+                </Accordion> : null
+                }
             </div>
         )
     }
@@ -135,7 +210,8 @@ const mapDispatch = (dispatch) => {
         addChapter: bindActionCreators(chapterActions.addChapterAction, dispatch),
         getChapters: bindActionCreators(chapterActions.getChaptersAction, dispatch),
         deleteChapter: bindActionCreators(chapterActions.deleteChapterAction, dispatch),
-        deleteFile: bindActionCreators(chapterActions.deleteFileAction, dispatch)
+        deleteFile: bindActionCreators(chapterActions.deleteFileAction, dispatch),
+        editChapter: bindActionCreators(chapterActions.editChapterAction, dispatch)
     }
 }
 

@@ -18,9 +18,6 @@ class AddCourse extends Component {
         hover: false
     }
     componentWillMount() {
-        if (!localStorage.getItem('token') || !localStorage.getItem('id')) {
-            this.props.history.replace('/sign-in')
-        }
         if (this.props.match.params.id) {
             this.props.getCourseById(Number(this.props.match.params.id)).then(() => {
                 if (this.props.course)
@@ -105,7 +102,7 @@ class AddCourse extends Component {
                     <div>
                         {this.props.match.params.id ?
                             <div>
-                                <Button color='linkedin' style={{ borderRadius: "0px" }} onClick={() => { this.props.history.push(`/chapters/${this.props.match.params.id}`) }}>Update Chapters</Button>
+                                <Button type='button' color='linkedin' style={{ borderRadius: "0px" }} onClick={() => { this.props.history.push(`/chapters/${this.props.match.params.id}`) }}>Update Chapters</Button>
                                 <Button type='submit' color='linkedin' style={{ borderRadius: '0px', marginBottom: '12px', width: '150px' }} onClick={this.handleUpdate}>Save Changes</Button>
                             </div>
                             : <Button type='submit' color='linkedin' style={{ borderRadius: '0px', marginBottom: '12px', width: '100px' }} onClick={this.handleSubmit}>Add</Button>}{" "}

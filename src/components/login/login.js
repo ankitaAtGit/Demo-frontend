@@ -36,7 +36,10 @@ class Login extends Component {
             this.props.login(this.state).then(() => {
                 if (this.props.auth.token !== '') {
                     this.setState({ email: '', password: '', submitted: false, showSuccess: true })
-                    setTimeout(() => this.props.history.push('/home'), 2000)
+                    if (this.props.location.state)
+                        setTimeout(() => this.props.history.push(this.props.location.state.from.pathname), 2000)
+                    else
+                        setTimeout(() => this.props.history.push('/home'), 2000)
                 }
             })
     }

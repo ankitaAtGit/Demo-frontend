@@ -22,11 +22,21 @@ export const deleteChapterService = (id) => {
     return baseService.delete(`/chapter/${id}`, config)
 }
 
-export const deleteFileService = (file, id) => {
+export const deleteFileService = (id) => {
     const config = {
         headers: {
             'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
     }
-    return baseService.delete(`/chapter/id/${id}/file/${file}`, config)
+    return baseService.delete(`/file/${id}`, config)
+}
+
+export const editChapterService = (id, chapter) => {
+    const config = {
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+    }
+    debugger
+    return baseService.put(`chapter/${id}`, chapter, config)
 }

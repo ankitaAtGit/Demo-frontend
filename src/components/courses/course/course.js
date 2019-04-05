@@ -9,7 +9,7 @@ import * as courseActions from '../../../actions/course.actions';
 import * as chapterActions from '../../../actions/chapter.actions';
 import * as cartActions from '../../../actions/cart.actions'
 import CheckoutModal from '../../checkout/checkout';
-// import { filePath } from '../../../constants/path';
+import { filePath } from '../../../constants/path';
 
 class Course extends Component {
     state = {
@@ -131,7 +131,7 @@ class Course extends Component {
                                     >
                                     </Confirm>
                                 </div> :
-                                this.state.subbedCourses.findIndex((course) => course.CourseId === this.props.course.course.id) === -1 ?
+                                this.state.subbedCourses.findIndex((c) => c.CourseId === course.id) === -1 ?
                                     <div>
                                         <CheckoutModal
                                             toggle={this.toggle}
@@ -153,35 +153,60 @@ class Course extends Component {
                                     )
                             }
                         </div>
-                        <div style={{ marginLeft: '200px', marginTop: '30px' }}>
-                            <Header>Course Content</Header>
-                            {this.props.chapter.chapters.length > 0 ? <Accordion styled style={{ width: '800px' }}>
-                                {this.props.chapter.chapters.map((chapter, i) => {
-                                    return (
-                                        <div key={i}>
-                                            <Accordion.Title active={this.state.activeIndex === i} onClick={(e, { index }) => this.setState(oldState => ({ activeIndex: oldState.activeIndex === index ? -1 : index }))} index={i}>
-                                                <div style={{ display: 'flex' }}>
-                                                    <div style={{ width: '50%' }}>
-                                                        <Header size='medium'>{chapter.chapter_title}</Header>
-                                                    </div>
-                                                </div>
-                                                <hr />
-                                            </Accordion.Title>
-                                            {chapter.ChapterFiles.length > 0 ? <Accordion.Content active={this.state.activeIndex === i}>
-                                                <Table>
-                                                    <Table.Body>
-                                                        {chapter.ChapterFiles.map((file, i) => {
-                                                            return <Table.Row key={i}>
-                                                                <Table.Cell textAlign='left'>{file.file_name}</Table.Cell>
-                                                            </Table.Row>
+                        <div style={{ marginLeft: '70px', marginTop: '30px' }}>
+                            {localStorage.getItem('token') && this.state.subbedCourses.findIndex((c) => c.CourseId === course.id) !== -1 ?
+                                <div>
+                                    <Header>Course Content</Header>
+                                    {
+                                        this.props.chapter.chapters.length > 0 ?
+                                            this.props.chapter.chapters.map(ch => {
+                                                return (
+                                                    <div style={{ display: "flex" }} key={ch.id}>
+                                                        {ch.ChapterFiles.map(f => {
+                                                            return (
+                                                                <div key={f.id} style={{ marginRight: '20px' }}>
+                                                                    <video key={f.id} width="320" height='160' controls>
+                                                                        <source src={filePath + f.file_name} type={f.file_type} />
+                                                                    </video>
+                                                                </div>
+                                                            )
                                                         })}
-                                                    </Table.Body>
-                                                </Table>
-                                            </Accordion.Content> : null}
-                                        </div>
-                                    )
-                                })}
-                            </Accordion> : null}
+                                                    </div>
+                                                )
+                                            }) : null
+                                    }
+                                </div> :
+                                this.props.chapter.chapters.length > 0 ?
+                                    <div style={{ marginLeft: '130px' }}>
+                                        <Header>Course Content</Header>
+                                        <Accordion styled style={{ width: '800px' }}>
+                                            {this.props.chapter.chapters.map((chapter, i) => {
+                                                return (
+                                                    <div key={i}>
+                                                        <Accordion.Title active={this.state.activeIndex === i} onClick={(e, { index }) => this.setState(oldState => ({ activeIndex: oldState.activeIndex === index ? -1 : index }))} index={i}>
+                                                            <div style={{ display: 'flex' }}>
+                                                                <div style={{ width: '50%' }}>
+                                                                    <Header size='medium'>{chapter.chapter_title}</Header>
+                                                                </div>
+                                                            </div>
+                                                            <hr />
+                                                        </Accordion.Title>
+                                                        {chapter.ChapterFiles.length > 0 ? <Accordion.Content active={this.state.activeIndex === i}>
+                                                            <Table>
+                                                                <Table.Body>
+                                                                    {chapter.ChapterFiles.map((file, i) => {
+                                                                        return <Table.Row key={i}>
+                                                                            <Table.Cell textAlign='left'>{file.file_name}</Table.Cell>
+                                                                        </Table.Row>
+                                                                    })}
+                                                                </Table.Body>
+                                                            </Table>
+                                                        </Accordion.Content> : null}
+                                                    </div>
+                                                )
+                                            })}
+                                        </Accordion>
+                                    </div> : null}
                         </div>
                     </div >)
                 }

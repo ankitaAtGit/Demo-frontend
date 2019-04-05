@@ -61,19 +61,43 @@ export const deleteChapterAction = (id) => {
     }
 }
 
-export const deleteFileAction = (file, id) => {
+export const deleteFileAction = (id, chapterId) => {
     return (dispatch) => {
-        return services.deleteFileService(file, id).then(response => {
+        return services.deleteFileService(id).then(response => {
             if (response.status === 200) {
                 dispatch({
                     type: types.DELETE_FILE_SUCCESS,
-                    file, id
+                    id, chapterId
                 })
             }
         }).catch(err => {
             if (err.response) {
                 dispatch({
                     type: types.DELETE_FILE_FAIL,
+                    error: err.response.data.error
+                })
+            }
+        })
+    }
+}
+
+export const editChapterAction = (id, chapter, chapterData) => {
+    debugger
+    return (dispatch) => {
+        return services.editChapterService(id, chapterData).then(response => {
+            debugger
+            if (response.status === 200) {
+                dispatch({
+                    type: types.EDIT_CHAPTER_SUCCESS,
+                    id, chapter,
+                    files: response.data
+                })
+            }
+        }).catch(err => {
+            debugger
+            if (err.response) {
+                dispatch({
+                    type: types.EDIT_CHAPTER_FAIL,
                     error: err.response.data.error
                 })
             }

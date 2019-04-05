@@ -14,27 +14,30 @@ import UserCourses from './components/userProfile/userCourses'
 import store from './store'
 import CourseChapters from './components/addCourse/courseChapters'
 import Cart from './components/cart/cart'
+import PrivateRoute from './components/privateroute/privateRoute'
 
 class App extends Component {
   render() {
     return (
       <div>
         <Provider store={store}>
+          {/* <PrivateRoute component={Cart} path={'something else'} /> */}
           <Router>
             <Header />
             <Switch>
-              <Route path='/chapters/:id' component={CourseChapters} />
+              <PrivateRoute path='/chapters/:id' component={CourseChapters} />
               <Route path='/sign-in' component={Login} />
               <Route path='/home' component={Dashboard} />
-              <Route path='/profile' component={UserProfile} />
+              <PrivateRoute path='/profile' component={UserProfile} />
               <Route path='/course/details/:id' component={Course} />
               <Route path='/course' component={Courses} />
               <Route path='/sign-up' component={SignUp} />
-              <Route path='/new-course' component={AddCourse} />
-              <Route path='/edit-course/:id' component={AddCourse} />
-              <Route path='/mycourses' component={UserCourses} />
-              <Route path='/cart' component={Cart} />
+              <PrivateRoute path='/new-course' component={AddCourse} />
+              <PrivateRoute path='/edit-course/:id' component={AddCourse} />
+              <PrivateRoute path='/mycourses' component={UserCourses} />
+              <PrivateRoute path='/cart' component={Cart} />
               <Route path='/' component={Dashboard} />
+
             </Switch>
           </Router>
         </Provider>

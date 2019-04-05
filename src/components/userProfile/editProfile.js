@@ -18,19 +18,14 @@ class EditProfile extends Component {
         displayPic: ''
     }
     componentWillMount() {
-        if (this.props.auth.token === '') {
-            this.props.history.push('/sign-in')
-        }
-        else {
-            this.props.getUser(this.props.id).then(() => {
-                this.setState({
-                    firstName: this.props.user.firstName,
-                    lastName: this.props.user.lastName,
-                    picture: this.props.user.picture,
-                    displayPic: this.props.user.picture ? imgPath + this.props.user.picture : ''
-                })
-            });
-        }
+        this.props.getUser(this.props.id).then(() => {
+            this.setState({
+                firstName: this.props.user.firstName,
+                lastName: this.props.user.lastName,
+                picture: this.props.user.picture,
+                displayPic: this.props.user.picture ? imgPath + this.props.user.picture : ''
+            })
+        });
     }
     onDrop = (img) => {
         let reader = new FileReader();

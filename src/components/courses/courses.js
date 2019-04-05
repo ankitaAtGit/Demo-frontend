@@ -47,7 +47,7 @@ class Courses extends Component {
                         </Header.Content>
                     </Header>
                     : (
-                        <div style={{ margin: 'auto', width: '90%' }}>
+                        <div>
                             <CourseCards courses={this.props.courses} selectCourse={this.selectCourse} />
                         </div>
                     )}
