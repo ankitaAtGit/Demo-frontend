@@ -41,11 +41,16 @@ class Login extends Component {
                     this.props.getCoursesByUser(this.props.auth.id).then(() => {
                         let courses = this.props.course.courses
                         if (JSON.parse(localStorage.getItem('cart')).length > 0) {
-                            JSON.parse(localStorage.getItem('cart')).forEach(c => {
-                                if (courses.findIndex(course => course.id === c.id) === -1)
-                                    this.props.addToCart({ UserId: this.props.auth.id, CourseId: c.id })
+                            this.props.getSubbedCourses(this.props.auth.id).then(() => {
+                                let subbedCourses = this.props.course.subbedCourses;
+                                JSON.parse(localStorage.getItem('cart')).forEach(c => {
+                                    if (courses.findIndex(course => course.id === c.id) === -1 && subbedCourses.findIndex(course => course.CourseId === c.id) === -1)
+                                        this.props.addToCart({ UserId: this.props.auth.id, CourseId: c.id })
+                                })
+                                this.props.emptyCart();
+
                             })
-                            this.props.emptyCart();
+
                         }
                     })
                     if (this.props.location.state)
@@ -98,7 +103,8 @@ const mapDispatch = (dispatch) => {
     return {
         login: bindActionCreators(authActions.signInAction, dispatch),
         addToCart: bindActionCreators(cartActions.addToCartAction, dispatch),
-        getCoursesByUser: bindActionCreators(courseActions.getCourseByUserId, dispatch)
+        getCoursesByUser: bindActionCreators(courseActions.getCourseByUserId, dispatch),
+        getSubbedCourses: bindActionCreators(courseActions.getSubscribeCourses, dispatch)
     }
 }
 
