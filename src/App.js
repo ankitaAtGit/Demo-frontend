@@ -17,27 +17,59 @@ import Cart from './components/cart/cart'
 import PrivateRoute from './components/privateroute/privateRoute'
 
 class App extends Component {
+  state = {
+    userCart: [],
+    cartCount: 0
+  }
+  componentWillMount() {
+    if (!localStorage.getItem('cart')) {
+      localStorage.setItem('cart', JSON.stringify([]))
+    }
+    this.setState({
+      userCart: JSON.parse(localStorage.getItem('cart')),
+      cartCount: JSON.parse(localStorage.getItem('cart')).length
+    })
+
+  }
+  removeFromUserCart = (courseId) => {
+    let { userCart, cartCount } = this.state;
+    let x = userCart.findIndex(c => c.id === courseId)
+    userCart.splice(x, 1);
+    cartCount--;
+    this.setState({ userCart, cartCount })
+    localStorage.setItem('cart', JSON.stringify(userCart))
+  }
+  addToUserCart = (course) => {
+    let courses = JSON.parse(localStorage.getItem('cart'));
+    let newCourses = [...courses, course];
+    let { cartCount } = this.state;
+    cartCount++;
+    localStorage.setItem('cart', JSON.stringify(newCourses))
+    this.setState({ userCart: newCourses, cartCount })
+  }
+  emptyCart = () => {
+    this.setState({ userCart: [], cartCount:0 })
+    localStorage.setItem('cart', JSON.stringify([]))
+  }
   render() {
     return (
       <div>
         <Provider store={store}>
-          {/* <PrivateRoute component={Cart} path={'something else'} /> */}
           <Router>
-            <Header />
+            <Header cartCount={this.state.cartCount} />
             <Switch>
               <PrivateRoute path='/chapters/:id' component={CourseChapters} />
-              <Route path='/sign-in' component={Login} />
+              <Route path='/sign-in' render={(props) => <Login {...props} emptyCart={this.emptyCart} />} />
               <Route path='/home' component={Dashboard} />
               <PrivateRoute path='/profile' component={UserProfile} />
-              <Route path='/course/details/:id' component={Course} />
+              <Route path='/course/details/:id' render={(props) => <Course {...props} addToUserCart={this.addToUserCart} userCart={this.state.userCart} />} />
               <Route path='/course' component={Courses} />
               <Route path='/sign-up' component={SignUp} />
               <PrivateRoute path='/new-course' component={AddCourse} />
               <PrivateRoute path='/edit-course/:id' component={AddCourse} />
               <PrivateRoute path='/mycourses' component={UserCourses} />
-              <PrivateRoute path='/cart' component={Cart} />
+              <Route path='/cart' render={(props) => <Cart {...props} userCart={this.state.userCart} removeFromUserCart={this.removeFromUserCart} />} />
               <Route path='/' component={Dashboard} />
-
             </Switch>
           </Router>
         </Provider>

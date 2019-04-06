@@ -38,7 +38,8 @@ const initState = {
     },
     cart: {
         cart: [],
-        error: ''
+        error: '',
+        count: 0
     }
 }
 
@@ -46,4 +47,5 @@ if (localStorage.getItem('token') && localStorage.getItem('id')) {
     initState.auth.token = localStorage.getItem('token');
     initState.auth.id = localStorage.getItem('id');
 }
+
 export default createStore(reducer, initState, enhancer);

@@ -20,7 +20,8 @@ class SignUp extends Component {
         displayPic: '',
         showSuccess: false,
         invalid: false,
-        invalidEmail: false
+        invalidEmail: false,
+        shortPassword: false
     }
     componentWillMount() {
         if (this.props.auth.token !== '') {
@@ -39,7 +40,7 @@ class SignUp extends Component {
     }
     handleChange = (e) => {
         if (e.target.name === 'email') this.setState({ invalidEmail: false })
-        if (e.target.name === 'password' || e.target.name === 'cpassword') this.setState({ invalid: false })
+        if (e.target.name === 'password' || e.target.name === 'cpassword') this.setState({ invalid: false, shortPassword: false })
         this.setState({ [e.target.name]: e.target.value, submitted: false })
     }
     removeImage = () => {
@@ -49,6 +50,9 @@ class SignUp extends Component {
         const { password, cpassword } = this.state;
         if (password !== cpassword)
             this.setState({ invalid: true })
+        else if (password.length < 6) {
+            this.setState({ shortPassword: true })
+        }
     }
     checkEmail = () => {
         let { email } = this.state;
@@ -119,6 +123,7 @@ class SignUp extends Component {
                                 <label>Password*</label>
                                 <Input type='password' name='password' value={this.state.password} onChange={this.handleChange} onBlur={this.checkPassword} />
                                 {this.state.submitted && this.state.password === '' ? <Label color='red' pointing basic>Please enter your password</Label> : null}
+                                {this.state.shortPassword && this.state.password !== '' ? <Label color='red' pointing basic>Your password should be of 6 characters or more</Label> : null}
                             </Form.Field>
                             <Form.Field>
                                 <label>Confirm Password*</label>

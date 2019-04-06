@@ -9,7 +9,11 @@ const PrivateRoute = ({ component, ...rest }) => {
     }
     else {
         return (
-            <Redirect to={{ pathname: '/sign-in', state: { from: rest.location } }} />
+            <Redirect to={{
+                pathname: '/sign-in', state: {
+                    from: rest.location
+                }
+            }} />
         )
     }
 }

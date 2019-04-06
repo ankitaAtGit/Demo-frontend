@@ -30,7 +30,6 @@ export default (state = initState, action) => {
             return Object.assign({}, state, { error: action.error });
 
         case types.DELETE_FILE_SUCCESS:
-            debugger
             let chapterDel = state.chapters
             let delFile_i = chapterDel.findIndex(chapter => chapter.id === action.chapterId);
             let chapterFiles = chapterDel[delFile_i].ChapterFiles
@@ -42,7 +41,6 @@ export default (state = initState, action) => {
             return Object.assign({}, state, { error: action.error });
 
         case types.EDIT_CHAPTER_SUCCESS:
-            debugger
             let { id, chapter, files } = action;
             let editChapters = state.chapters;
             let x = editChapters.findIndex(c => c.id === id);

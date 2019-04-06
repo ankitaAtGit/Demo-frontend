@@ -37,6 +37,5 @@ export const editChapterService = (id, chapter) => {
             'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
     }
-    debugger
     return baseService.put(`chapter/${id}`, chapter, config)
 }

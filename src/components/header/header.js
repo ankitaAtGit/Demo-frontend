@@ -12,7 +12,8 @@ import * as cartActions from '../../actions/cart.actions';
 class Header extends Component {
     state = {
         searchResults: [],
-        query: ''
+        query: '',
+        cartCount: 0
     }
 
     componentWillMount() {
@@ -23,12 +24,19 @@ class Header extends Component {
         if (localStorage.getItem('token') && localStorage.getItem('id')) {
             this.props.countCart(Number(localStorage.getItem('id')))
         }
+        else {
+            this.setState({ cartCount: this.props.cartCount })
+        }
     }
+
     componentWillReceiveProps(newProps) {
         if (newProps.auth.id !== this.props.auth.id)
             if (localStorage.getItem('token') && localStorage.getItem('id')) {
                 this.props.countCart(Number(localStorage.getItem('id')))
             }
+        if (newProps.cartCount !== this.props.cartCount) {
+            this.setState({cartCount:newProps.cartCount})
+        }
     }
     handleSignInClick = () => {
         this.props.history.push('/sign-in')
@@ -86,12 +94,15 @@ class Header extends Component {
                             onResultSelect={this.resultSelect}
                             value={this.state.query}>
                         </Search>
-                        <Menu.Item position='right'>
+                        <Menu.Item name='cart' position='right' as='a' onClick={() => { this.props.history.push('/cart') }} >
+                            <Icon name='cart' style={{ fontSize: '25px' }} />
+                            {this.state.cartCount > 0 ? < Label size='mini' circular color='blue' floating>{this.state.cartCount}</Label> : null}
+                        </Menu.Item>
+                        <Menu.Item>
                             <Button className='link item' onClick={this.handleSignInClick} content='Login' />
                         </Menu.Item>
                         <Menu.Item>
                             <Button className='link item' onClick={() => this.props.history.push('/sign-up')} content='Sign Up' />
-
                         </Menu.Item>
                     </Menu> :
                     <Menu style={{ backgroundColor: '#dc3545', height: "60px", borderRadius: '0px', padding: '12px' }} inverted>

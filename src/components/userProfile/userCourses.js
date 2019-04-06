@@ -20,7 +20,7 @@ class UserCourses extends Component {
             ((localStorage.getItem('id') && Number(localStorage.getItem('id')) === Number(this.props.id))) ?
                 <div style={{ margin: "20px" }}>
                     {this.props.courses.length === 0 ?
-                        <Header size='medium'>Looks like you haven' t uploaded any courses.Click + to start teaching!</Header>
+                        <Header size='medium'>Looks like you haven't uploaded any courses. Click + to start teaching!</Header>
                         : <CourseCards courses={this.props.courses} selectCourse={this.selectCourse} />}
                 </div> : <CourseCards courses={this.props.courses} selectCourse={this.selectCourse} />
         )

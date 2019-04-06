@@ -5,35 +5,56 @@ import { bindActionCreators } from 'redux'
 import { withRouter } from 'react-router-dom'
 
 import * as cartActions from '../../actions/cart.actions'
+// import * as courseActions from '../../actions/course.actions';
 import CheckoutModal from '../checkout/checkout'
 
 class Cart extends Component {
     state = {
+        courses: [],
         open: false,
         price: '',
         showSuccess: false
     }
     componentWillMount() {
-        this.props.getCart(Number(localStorage.getItem('id'))).then(() => {
-            this.setState({
-                price: this.props.cart.courseData.reduce((total, ele) => total + ele.price, 0)
+        if (localStorage.getItem('id')) {
+            this.props.getCart(Number(localStorage.getItem('id'))).then(() => {
+                this.setState({
+                    price: this.props.cart.courseData.reduce((total, ele) => total + ele.price, 0),
+                    courses: this.props.cart.courseData
+                })
             })
-        })
+        }
+        else {
+            let courses = this.props.userCart
+            let price = courses.reduce((total, ele) => total + ele.price, 0)
+            this.setState({ courses: courses, price: price })
+        }
     }
     removeFromCart = (courseId) => {
-        this.props.removeCart(Number(localStorage.getItem('id')), courseId)
+        if (localStorage.getItem('id'))
+            this.props.removeCart(Number(localStorage.getItem('id')), courseId)
+        else {
+            let { courses, price } = this.state;
+            let x = courses.findIndex(c => c.id === courseId)
+            price = price - courses[x].price
+            this.setState({ price })
+            this.props.removeFromUserCart(courseId)
+        }
     }
     toggleCheckout = () => {
-        this.setState(oldState => ({ open: !oldState.open }))
+        if (localStorage.getItem('id'))
+            this.setState(oldState => ({ open: !oldState.open }))
+        else
+            this.props.history.replace({ pathname: '/sign-in', state: { from: { pathname: this.props.location.pathname } } })
     }
     render() {
         return (
             <div style={{ margin: '40px' }}>
-                {this.props.cart.cart.length > 0 ?
+                {this.state.courses.length > 0 ?
                     <div>
                         <Item.Group>
                             {
-                                this.props.cart.courseData.map((course, i) => {
+                                this.state.courses.map((course, i) => {
                                     return (
                                         <Item key={i}>
                                             <div style={{ margin: 'auto', width: '900px', boxShadow: '2px 3px 2px 2px lightgrey', padding: '20px' }}>
@@ -76,7 +97,7 @@ class Cart extends Component {
                                 open={this.state.open}
                                 price={this.state.price}
                                 toggle={this.toggleCheckout}
-                                courses={this.props.cart.courseData}
+                                courses={this.state.courses}
                                 trigger={<Button content='Continue to Checkout' icon='right arrow'
                                     onClick={this.toggleCheckout}
                                     labelPosition='right' color='linkedin' style={{ borderRadius: '0px' }}
@@ -100,7 +121,8 @@ const mapState = (state) => {
 const mapDispatch = (dispatch) => {
     return {
         getCart: bindActionCreators(cartActions.getCartAction, dispatch),
-        removeCart: bindActionCreators(cartActions.removeCartAction, dispatch)
+        removeCart: bindActionCreators(cartActions.removeCartAction, dispatch),
+        // getCourseById: bindActionCreators(courseActions.getCourseById, dispatch)
     }
 }
 export default withRouter(connect(mapState, mapDispatch)(Cart))

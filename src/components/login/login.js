@@ -5,6 +5,8 @@ import { bindActionCreators } from 'redux';
 import { withRouter, Link } from 'react-router-dom';
 
 import * as authActions from '../../actions/auth.actions';
+import * as cartActions from '../../actions/cart.actions';
+import * as courseActions from '../../actions/course.actions';
 
 class Login extends Component {
     state = {
@@ -36,6 +38,16 @@ class Login extends Component {
             this.props.login(this.state).then(() => {
                 if (this.props.auth.token !== '') {
                     this.setState({ email: '', password: '', submitted: false, showSuccess: true })
+                    this.props.getCoursesByUser(this.props.auth.id).then(() => {
+                        let courses = this.props.course.courses
+                        if (JSON.parse(localStorage.getItem('cart')).length > 0) {
+                            JSON.parse(localStorage.getItem('cart')).forEach(c => {
+                                if (courses.findIndex(course => course.id === c.id) === -1)
+                                    this.props.addToCart({ UserId: this.props.auth.id, CourseId: c.id })
+                            })
+                            this.props.emptyCart();
+                        }
+                    })
                     if (this.props.location.state)
                         setTimeout(() => this.props.history.push(this.props.location.state.from.pathname), 2000)
                     else
@@ -77,13 +89,16 @@ class Login extends Component {
 
 const mapState = (state) => {
     return {
-        auth: state.auth
+        auth: state.auth,
+        course: state.course
     }
 }
 
 const mapDispatch = (dispatch) => {
     return {
-        login: bindActionCreators(authActions.signInAction, dispatch)
+        login: bindActionCreators(authActions.signInAction, dispatch),
+        addToCart: bindActionCreators(cartActions.addToCartAction, dispatch),
+        getCoursesByUser: bindActionCreators(courseActions.getCourseByUserId, dispatch)
     }
 }
 

@@ -2,8 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'react-router-dom'
-import { Header, Button, Confirm, Icon, Rating, Accordion, Table } from 'semantic-ui-react';
-// import FileViewer from 'react-file-viewer';
+import { Header, Button, Confirm, Icon, Rating, Accordion, Table, Grid } from 'semantic-ui-react';
 
 import * as courseActions from '../../../actions/course.actions';
 import * as chapterActions from '../../../actions/chapter.actions';
@@ -13,6 +12,7 @@ import { filePath } from '../../../constants/path';
 
 class Course extends Component {
     state = {
+        cart: [],
         showConfirm: false,
         course_rating: 0,
         subbedCourses: [],
@@ -29,6 +29,9 @@ class Course extends Component {
                 if (i !== -1)
                     this.setState({ course_rating: this.props.course.subbedCourses[i].course_rating, subbedCourses: this.props.course.subbedCourses })
             })
+        }
+        else {
+            this.setState({ cart: this.props.userCart })
         }
         this.props.getCourseById(Number(this.props.match.params.id))
         this.props.getChapters(Number(this.props.match.params.id))
@@ -47,6 +50,9 @@ class Course extends Component {
         }
         if (newProps.course.subbedCourses !== this.props.course.subbedCourses) {
             this.setState({ subbedCourses: newProps.course.subbedCourses })
+        }
+        if (newProps.userCart !== this.props.userCart) {
+            this.setState({ cart: newProps.userCart })
         }
     }
     toggleConfirm = () => {
@@ -74,15 +80,20 @@ class Course extends Component {
         if (localStorage.getItem('id') && localStorage.getItem('token')) {
             this.toggle()
         }
-        else
-            this.props.history.push('/sign-in')
+        else {
+            this.props.history.replace({ pathname: '/sign-in', state: { from: { pathname: this.props.location.pathname } } })
+        }
     }
     rateCourse = (event, { rating }) => {
         this.setState({ course_rating: rating })
         this.props.rateCourse(this.props.course.course.id, { UserId: Number(localStorage.getItem('id')), course_rating: rating })
     }
     addToCart = () => {
-        this.props.addToCart({ UserId: Number(localStorage.getItem('id')), CourseId: this.props.course.course.id })
+        if (localStorage.getItem('token'))
+            this.props.addToCart({ UserId: Number(localStorage.getItem('id')), CourseId: this.props.course.course.id })
+        else {
+            this.props.addToUserCart(this.props.course.course);
+        }
     }
     editCourse = () => {
         this.props.history.push(`/edit-course/${this.props.course.course.id}`)
@@ -104,6 +115,7 @@ class Course extends Component {
                             {course.price > 0 ? <Header size='small'>Learn for {course.price}/-</Header>
                                 : <Header size='small'>Free</Header>}
                             <p>by {course.author.firstName} {course.author.lastName}</p>
+                            <p>by {course.author.email}</p>
 
 
                             {(localStorage.getItem('token') && localStorage.getItem('id') && Number(localStorage.getItem('id')) === course.author.id) ?
@@ -142,7 +154,10 @@ class Course extends Component {
                                         {localStorage.getItem('id') && localStorage.getItem('token') ?
                                             this.props.cart.cart.findIndex((cart => cart.CourseId === course.id)) === -1 ?
                                                 <Button style={{ borderRadius: '0px' }} onClick={this.addToCart} color='linkedin'>Add to Cart</Button> :
-                                                <Button style={{ borderRadius: '0px' }} onClick={this.goToCart} color='linkedin'>Go to Cart</Button> : null}
+                                                <Button style={{ borderRadius: '0px' }} onClick={this.goToCart} color='linkedin'>Go to Cart</Button> :
+                                            this.state.cart.findIndex(c => c.id === course.id) === -1 ?
+                                                <Button style={{ borderRadius: '0px' }} onClick={this.addToCart} color='linkedin'>Add to Cart</Button> :
+                                                <Button style={{ borderRadius: '0px' }} onClick={this.goToCart} color='linkedin'>Go to Cart</Button>}
                                     </div>
                                     :
                                     (
@@ -154,23 +169,37 @@ class Course extends Component {
                             }
                         </div>
                         <div style={{ marginLeft: '70px', marginTop: '30px' }}>
-                            {localStorage.getItem('token') && this.state.subbedCourses.findIndex((c) => c.CourseId === course.id) !== -1 ?
+                            {(localStorage.getItem('token') && (this.state.subbedCourses.findIndex((c) => c.CourseId === course.id) !== -1)) ||
+                                (localStorage.getItem('token') && Number(localStorage.getItem('id')) === course.author.id) ?
                                 <div>
                                     <Header>Course Content</Header>
                                     {
                                         this.props.chapter.chapters.length > 0 ?
-                                            this.props.chapter.chapters.map(ch => {
+                                            this.props.chapter.chapters.map((ch, i) => {
                                                 return (
-                                                    <div style={{ display: "flex" }} key={ch.id}>
-                                                        {ch.ChapterFiles.map(f => {
-                                                            return (
-                                                                <div key={f.id} style={{ marginRight: '20px' }}>
-                                                                    <video key={f.id} width="320" height='160' controls>
-                                                                        <source src={filePath + f.file_name} type={f.file_type} />
-                                                                    </video>
-                                                                </div>
-                                                            )
-                                                        })}
+                                                    <div key={i}>
+                                                        <Header><Icon name='caret right' />{ch.chapter_title}</Header>
+                                                        <Grid columns={4} style={{ display: "flex", width: '1200px' }} key={ch.id}>
+                                                            <Grid.Row>
+                                                                {ch.ChapterFiles.map(f => {
+                                                                    return (
+                                                                        <Grid.Column key={f.id} style={{ marginRight: '20px', marginBottom: '45px' }}>
+                                                                            {f.file_type.match('video') ?
+                                                                                < video key={f.id} width="300" height='160' controls>
+                                                                                    <source src={filePath + f.file_name} type={f.file_type} />
+                                                                                    Your browser does not support the video tag
+                                                                                </video> :
+                                                                                <a target='new' href={filePath + f.file_name}>
+                                                                                    <div style={{ textAlign: 'center' }}>
+                                                                                        <Icon size='massive' name='file' />
+                                                                                        <Header size='small'>{f.file_name}</Header>
+                                                                                    </div>
+                                                                                </a>}
+                                                                        </Grid.Column>
+                                                                    )
+                                                                })}
+                                                            </Grid.Row>
+                                                        </Grid>
                                                     </div>
                                                 )
                                             }) : null
@@ -196,7 +225,8 @@ class Course extends Component {
                                                                 <Table.Body>
                                                                     {chapter.ChapterFiles.map((file, i) => {
                                                                         return <Table.Row key={i}>
-                                                                            <Table.Cell textAlign='left'>{file.file_name}</Table.Cell>
+                                                                            <Table.Cell textAlign='left'>
+                                                                                {file.file_type.match('video') ? <Icon name='video play' /> : <Icon name='file' />} {file.file_name}</Table.Cell>
                                                                         </Table.Row>
                                                                     })}
                                                                 </Table.Body>

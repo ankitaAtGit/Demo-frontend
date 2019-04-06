@@ -82,10 +82,8 @@ export const deleteFileAction = (id, chapterId) => {
 }
 
 export const editChapterAction = (id, chapter, chapterData) => {
-    debugger
     return (dispatch) => {
         return services.editChapterService(id, chapterData).then(response => {
-            debugger
             if (response.status === 200) {
                 dispatch({
                     type: types.EDIT_CHAPTER_SUCCESS,
@@ -94,7 +92,6 @@ export const editChapterAction = (id, chapter, chapterData) => {
                 })
             }
         }).catch(err => {
-            debugger
             if (err.response) {
                 dispatch({
                     type: types.EDIT_CHAPTER_FAIL,

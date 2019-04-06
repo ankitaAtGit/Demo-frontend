@@ -8,7 +8,7 @@ import EditProfile from './editProfile';
 import * as userActions from '../../actions/user.actions';
 import * as courseActions from '../../actions/course.actions';
 import UserSubCourses from './userSubCourses'
-import { imgPath } from '../../constants/path';
+import { imgPath, thumbImgPath } from '../../constants/path';
 
 class UserProfile extends Component {
     state = {
@@ -29,7 +29,7 @@ class UserProfile extends Component {
                     {
                         this.props.user ?
                             this.props.user.picture
-                                ? <Image centered height='100px' width='100px' src={imgPath + this.props.user.picture} circular />
+                                ? <Image centered height='100px' width='100px' src={thumbImgPath + this.props.user.picture} circular />
                                 : <Image centered height='100px' width='100px' src={imgPath + 'placeholder.jpg'} circular bordered />
                             : null
                     }
