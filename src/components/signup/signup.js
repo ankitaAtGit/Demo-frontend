@@ -16,12 +16,13 @@ class SignUp extends Component {
         password: '',
         cpassword: '',
         submitted: false,
-        picture: [],
+        picture: null,
         displayPic: '',
         showSuccess: false,
         invalid: false,
         invalidEmail: false,
-        shortPassword: false
+        shortPassword: false,
+        showError: ''
     }
     componentWillMount() {
         if (this.props.auth.token !== '') {
@@ -44,7 +45,7 @@ class SignUp extends Component {
         this.setState({ [e.target.name]: e.target.value, submitted: false })
     }
     removeImage = () => {
-        this.setState({ picture: [], displayPic: '' })
+        this.setState({ picture: null, displayPic: '' })
     }
     checkPassword = () => {
         const { password, cpassword } = this.state;
@@ -78,16 +79,26 @@ class SignUp extends Component {
             data.append('lastName', lastName)
             data.append('email', this.state.email)
             data.append('password', this.state.password)
-            data.append('picture', this.state.picture)
+            if (this.state.picture) {
+                data.append('picture', this.state.picture)
+            }
+            else {
+                data.append('picture', '')
+            }
             this.props.signUp(data, config).then(() => {
                 if (localStorage.getItem('id')) {
                     this.setState({ showSuccess: true })
-                    this.setState({ firstName: '', lastName: '', email: '', password: '', cpassword: '', submitted: false, picture: [], displayPic: '' })
+                    this.setState({ firstName: '', lastName: '', email: '', password: '', cpassword: '', submitted: false, picture: null, displayPic: '' })
                     setTimeout(() => this.props.history.push('/sign-in'), 2000)
-
+                }
+                else {
+                    this.setState({ showError: this.props.auth.signUpError })
                 }
             })
         }
+    }
+    componentWillUnmount() {
+        this.setState({ showError: '' })
     }
     render() {
         return (
@@ -150,7 +161,7 @@ class SignUp extends Component {
                                     </div>
                             }
                         </Form.Field>
-                        {this.props.auth.signUpError === '' ? null : <Form.Field><Header size='tiny' color='red'>{this.props.auth.signUpError}</Header></Form.Field>}
+                        {this.state.showError === '' ? null : <Form.Field><Header size='tiny' color='red'>{this.state.showError}</Header></Form.Field>}
                         <Button color='linkedin' style={{ borderRadius: '0px' }} onClick={this.submit}>Sign Up</Button>
                         <Header size='tiny'>Already have an account? <Header to='/sign-in' size='tiny' color='blue' as={Link}>Sign In</Header></Header>
                     </Form>

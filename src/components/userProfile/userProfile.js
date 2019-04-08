@@ -16,7 +16,7 @@ class UserProfile extends Component {
         subCourses: true
     }
     componentWillMount() {
-        this.props.getUser(this.props.id);
+        this.props.getUser(this.props.id)
     }
 
     render() {

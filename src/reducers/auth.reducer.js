@@ -22,7 +22,7 @@ export default (state = initState, action) => {
         case types.GET_USER_SUCCESS:
             return Object.assign({}, state, { user: { error: '', user: { ...action.user } } })
         case types.GET_USER_FAIL:
-            return Object.assign({}, state, { user: { error: action.error, user: {} } })
+            return Object.assign({}, state, { user: { error: action.error } })
         case types.SIGN_UP_SUCCESS:
             return Object.assign({}, state, { id: action.id, signUpError: '' })
         case types.SIGN_UP_FAIL:
@@ -34,7 +34,7 @@ export default (state = initState, action) => {
             editUser.picture = action.image;
             return Object.assign({}, state, { user: { user: { ...editUser } } })
         case types.EDIT_USER_FAIL:
-            return Object.assign({}, state, { user: { error: action.error } })
+            return Object.assign({}, state, { user: { ...state.user, error: action.error } })
         default: return state
     }
 }

@@ -13,6 +13,7 @@ class CheckoutModal extends Component {
             this.props.subscribeCourse({ CourseId: course.id, UserId: Number(localStorage.getItem('id')) }, course).then(() => {
                 if (this.props.course.error === '') {
                     this.props.removeCart(Number(localStorage.getItem('id')), course.id)
+                    this.props.toggle();
                 }
             })
             return true

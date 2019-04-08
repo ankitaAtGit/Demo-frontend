@@ -2,13 +2,14 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'react-router-dom'
-import { Header, Button, Confirm, Icon, Rating, Accordion, Table, Grid } from 'semantic-ui-react';
+import { Header, Button, Confirm, Icon, Rating, Accordion, Table, Grid, Progress, Popup } from 'semantic-ui-react';
 
 import * as courseActions from '../../../actions/course.actions';
 import * as chapterActions from '../../../actions/chapter.actions';
 import * as cartActions from '../../../actions/cart.actions'
 import CheckoutModal from '../../checkout/checkout';
 import { filePath } from '../../../constants/path';
+import StudyCourse from '../studycourse/studyCourse';
 
 class Course extends Component {
     state = {
@@ -19,7 +20,8 @@ class Course extends Component {
         hover: false,
         activeIndex: -1,
         open: false,
-        showError: false
+        showError: false,
+        subscriberCount: 0
     }
     componentWillMount() {
         if (localStorage.getItem('id') && localStorage.getItem('token')) {
@@ -33,7 +35,9 @@ class Course extends Component {
         else {
             this.setState({ cart: this.props.userCart })
         }
-        this.props.getCourseById(Number(this.props.match.params.id))
+        this.props.getCourseById(Number(this.props.match.params.id)).then(() => {
+            this.setState({ subscriberCount: this.props.course.course.subscriberCount })
+        })
         this.props.getChapters(Number(this.props.match.params.id))
     }
     componentWillReceiveProps(newProps) {
@@ -54,6 +58,7 @@ class Course extends Component {
         if (newProps.userCart !== this.props.userCart) {
             this.setState({ cart: newProps.userCart })
         }
+        this.setState({ subscriberCount: newProps.course.course.subscriberCount })
     }
     toggleConfirm = () => {
         this.setState(oldState => ({ showConfirm: !oldState.showConfirm, showError: false }));
@@ -116,7 +121,8 @@ class Course extends Component {
                                 : <Header size='small'>Free</Header>}
                             <p>by {course.author.firstName} {course.author.lastName}</p>
                             <p>by {course.author.email}</p>
-
+                            {this.state.subscriberCount !== 1 ? <p>Subscribed by {this.state.subscriberCount} users</p>
+                                : <p>Subscribed by {this.state.subscriberCount} user</p>}
 
                             {(localStorage.getItem('token') && localStorage.getItem('id') && Number(localStorage.getItem('id')) === course.author.id) ?
                                 <div>
@@ -164,6 +170,10 @@ class Course extends Component {
                                         <div>
                                             <Header size='small'>Rate this course: </Header>
                                             <Rating maxRating={5} onRate={this.rateCourse} rating={this.state.course_rating} icon='star' />{" "}
+                                            <br /><br />
+                                            <Popup trigger={<Progress color='green' percent={50} size='small' />} on='hover' position='bottom center'>
+                                                <Popup.Content>Static progress bar, will show current chapter and video</Popup.Content>
+                                            </Popup>
                                         </div>
                                     )
                             }
@@ -203,6 +213,7 @@ class Course extends Component {
                                                     </div>
                                                 )
                                             }) : null
+                                        // <StudyCourse chapters={this.props.chapter.chapters} instructor={Number(localStorage.getItem('id')) === course.author.id} />
                                     }
                                 </div> :
                                 this.props.chapter.chapters.length > 0 ?
@@ -218,7 +229,6 @@ class Course extends Component {
                                                                     <Header size='medium'>{chapter.chapter_title}</Header>
                                                                 </div>
                                                             </div>
-                                                            <hr />
                                                         </Accordion.Title>
                                                         {chapter.ChapterFiles.length > 0 ? <Accordion.Content active={this.state.activeIndex === i}>
                                                             <Table>

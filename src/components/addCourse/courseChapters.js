@@ -6,7 +6,7 @@ import { bindActionCreators } from 'redux';
 import { withRouter } from 'react-router-dom'
 
 import * as chapterActions from '../../actions/chapter.actions';
-
+import { filePath } from '../../constants/path';
 
 class CourseChapters extends Component {
     state = {
@@ -116,7 +116,7 @@ class CourseChapters extends Component {
                 <div style={{ boxShadow: '2px 3px 2px 2px lightgrey', padding: '15px', marginBottom: '15px' }}>
                     <Form>
                         <Form.Field>
-                            <Input type='text' placeholder='Chapter title' value={this.state.chapterTitle} onChange={(e) => this.setState({ chapterTitle: e.target.value, submitted: false })} />
+                            <Input type='text' placeholder='Chapter title*' value={this.state.chapterTitle} onChange={(e) => this.setState({ chapterTitle: e.target.value, submitted: false })} />
                             {this.state.submitted && this.state.chapterTitle === '' ? <Label basic color='red' pointing>This field cannot be empty</Label> : null}
                         </Form.Field>
                         <Form.Field style={{ textAlign: 'center' }}>
@@ -153,6 +153,7 @@ class CourseChapters extends Component {
                             </Table> : null}
 
                         </Form.Field>
+                        <Form.Field><Header size='small'>Note: Chapters will be ordered according to their title</Header></Form.Field>
                         <Form.Field>
                             {this.state.editing ? <Button type='button' style={{ borderRadius: '0px' }} content='Save Changes' color='linkedin' onClick={this.updateChapter} />
                                 : <Button type='button' style={{ borderRadius: '0px' }} content='Add Chapter' color='linkedin' onClick={this.addChapter} />}
@@ -187,14 +188,15 @@ class CourseChapters extends Component {
                                         >
                                         </Confirm>
                                     </div>
-                                    <hr />
                                 </Accordion.Title>
                                 {chapter.ChapterFiles.length > 0 ? <Accordion.Content active={this.state.activeIndex === i}>
                                     <Table>
                                         <Table.Body>
                                             {chapter.ChapterFiles.map((file, i) => {
                                                 return <Table.Row key={i}>
-                                                    <Table.Cell> {file.file_type.match('video') ? <Icon name='video play' /> : <Icon name='file' />} {file.file_name}</Table.Cell>
+                                                    <Table.Cell>
+                                                        <a target='new' href={filePath + file.file_name}>{file.file_type.match('video') ? <Icon name='video play' /> : <Icon name='file' />}
+                                                            {file.file_name}</a></Table.Cell>
                                                 </Table.Row>
                                             })}
                                         </Table.Body>

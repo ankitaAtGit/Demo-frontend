@@ -39,9 +39,11 @@ export default (state = initState, action) => {
 
         case types.SUBSCRIBE_COURSE_SUCCESS:
             let { subbedCourses, subCourseDetails } = state;
+            let courseSub = state.course;
+            courseSub.subscriberCount = action.data.subscriberCount
             subbedCourses.push(action.data)
             subCourseDetails.push(action.course)
-            return Object.assign({}, state, { error: '', subbedCourses: [...subbedCourses], subCourseDetails: [...subCourseDetails] })
+            return Object.assign({}, state, { error: '', course: { ...courseSub }, subbedCourses: [...subbedCourses], subCourseDetails: [...subCourseDetails] })
         case types.SUBSCRIBE_COURSE_FAIL:
             return Object.assign({}, state, { error: action.error, data: {} })
 
@@ -66,6 +68,7 @@ export default (state = initState, action) => {
 
         case types.RATE_COURSE_SUCCESS:
             let { CourseId, rating, avg } = action;
+            debugger
             let rateCourses = state.subbedCourses;
             let x = rateCourses.findIndex(course => course.CourseId === CourseId && course.UserId === rating.UserId)
             rateCourses[x].course_rating = rating.course_rating;

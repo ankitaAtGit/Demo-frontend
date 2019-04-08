@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Button, Form, Input, Label, Image, Icon } from 'semantic-ui-react'
+import { Button, Form, Input, Label, Image, Icon, Message } from 'semantic-ui-react'
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'react-router-dom';
@@ -14,16 +14,17 @@ class EditProfile extends Component {
         firstName: '',
         lastName: '',
         submitted: false,
-        picture: [],
-        displayPic: ''
+        picture: null,
+        displayPic: '',
+        showSuccess: false
     }
     componentWillMount() {
         this.props.getUser(this.props.id).then(() => {
             this.setState({
-                firstName: this.props.user.firstName,
-                lastName: this.props.user.lastName,
-                picture: this.props.user.picture,
-                displayPic: this.props.user.picture ? imgPath + this.props.user.picture : ''
+                firstName: this.props.user.user.firstName,
+                lastName: this.props.user.user.lastName,
+                picture: this.props.user.user.picture,
+                displayPic: this.props.user.user.picture ? imgPath + this.props.user.user.picture : ''
             })
         });
     }
@@ -38,7 +39,7 @@ class EditProfile extends Component {
         }
     }
     removeImage = () => {
-        this.setState({ picture: [], displayPic: '' })
+        this.setState({ picture: null, displayPic: '' })
     }
     submit = () => {
         this.setState({ submitted: true });
@@ -54,14 +55,29 @@ class EditProfile extends Component {
             lastName = lastName.replace(lastName.charAt(0), lastName.charAt(0).toUpperCase())
             data.append('firstName', firstName)
             data.append('lastName', lastName)
-            data.append('picture', this.state.picture)
-            data.append('email', this.props.user.email)
-            this.props.editUser(this.props.id, { firstName, lastName }, data, config)
+            if (this.state.picture) {
+                data.append('picture', this.state.picture)
+            }
+            else {
+                data.append('picture', '')
+            }
+            data.append('email', this.props.user.user.email)
+            this.props.editUser(this.props.id, { firstName, lastName }, data, config).then(() => {
+                if (!this.props.user.error) {
+                    this.setState({ showSuccess: true })
+                    setTimeout(() => this.setState({ showSuccess: false }), 2000)
+                }
+            })
         }
     }
     render() {
         return (
             <div style={{ width: '100%' }}>
+                <div style={{ margin: 'auto', width: '50%', marginBottom: '20px', marginTop: '10px' }}>
+                    <Message style={{ textAlign: 'center' }} hidden={!this.state.showSuccess} color='green'>
+                        Updated successfully
+                    </Message>
+                </div>
                 <div style={{ margin: 'auto', marginTop: '40px', width: '40%', padding: '15px', boxShadow: '2px 3px 2px 2px lightgrey' }}>
                     <Form>
                         <Form.Field>
@@ -105,7 +121,7 @@ const mapState = (state) => {
     return {
         auth: state.auth,
         id: state.auth.id,
-        user: state.auth.user.user,
+        user: state.auth.user,
     }
 }
 

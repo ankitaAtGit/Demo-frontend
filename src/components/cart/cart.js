@@ -5,7 +5,6 @@ import { bindActionCreators } from 'redux'
 import { withRouter } from 'react-router-dom'
 
 import * as cartActions from '../../actions/cart.actions'
-// import * as courseActions from '../../actions/course.actions';
 import CheckoutModal from '../checkout/checkout'
 
 class Cart extends Component {
@@ -16,12 +15,13 @@ class Cart extends Component {
         showSuccess: false
     }
     componentWillMount() {
-        if (localStorage.getItem('id')) {
+        if (localStorage.getItem('id') && localStorage.getItem('token')) {
             this.props.getCart(Number(localStorage.getItem('id'))).then(() => {
-                this.setState({
-                    price: this.props.cart.courseData.reduce((total, ele) => total + ele.price, 0),
-                    courses: this.props.cart.courseData
-                })
+                if (this.props.cart.courseData)
+                    this.setState({
+                        price: this.props.cart.courseData.reduce((total, ele) => total + ele.price, 0),
+                        courses: this.props.cart.courseData
+                    })
             })
         }
         else {
@@ -31,8 +31,9 @@ class Cart extends Component {
         }
     }
     removeFromCart = (courseId) => {
-        if (localStorage.getItem('id'))
+        if (localStorage.getItem('id') && localStorage.getItem('token')) {
             this.props.removeCart(Number(localStorage.getItem('id')), courseId)
+        }
         else {
             let { courses, price } = this.state;
             let x = courses.findIndex(c => c.id === courseId)
@@ -41,8 +42,18 @@ class Cart extends Component {
             this.props.removeFromUserCart(courseId)
         }
     }
+    componentWillReceiveProps(newProps) {
+        if (newProps.cart && newProps.cart !== this.props.cart)
+            if (localStorage.getItem('id') && localStorage.getItem('token')) {
+                if (newProps.cart.courseData)
+                    this.setState({
+                        price: newProps.cart.courseData.reduce((total, ele) => total + ele.price, 0),
+                        courses: newProps.cart.courseData
+                    })
+            }
+    }
     toggleCheckout = () => {
-        if (localStorage.getItem('id'))
+        if (localStorage.getItem('id') && localStorage.getItem('token'))
             this.setState(oldState => ({ open: !oldState.open }))
         else
             this.props.history.replace({ pathname: '/sign-in', state: { from: { pathname: this.props.location.pathname } } })

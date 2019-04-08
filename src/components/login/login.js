@@ -14,7 +14,8 @@ class Login extends Component {
         password: '',
         submitted: false,
         showSuccess: false,
-        invalidEmail: false
+        invalidEmail: false,
+        showError: ''
     }
     componentWillMount() {
         if (this.props.auth.token !== '') {
@@ -32,6 +33,9 @@ class Login extends Component {
         if (e.target.name === 'email') this.setState({ invalidEmail: false })
         this.setState({ [e.target.name]: e.target.value, submitted: false })
     }
+    componentWillUnmount() {
+        this.setState({ showError: '' })
+    }
     submit = () => {
         this.setState({ submitted: true });
         if (this.state.email !== '' && this.state.password !== '' && !this.checkEmail())
@@ -48,7 +52,6 @@ class Login extends Component {
                                         this.props.addToCart({ UserId: this.props.auth.id, CourseId: c.id })
                                 })
                                 this.props.emptyCart();
-
                             })
 
                         }
@@ -57,6 +60,9 @@ class Login extends Component {
                         setTimeout(() => this.props.history.push(this.props.location.state.from.pathname), 2000)
                     else
                         setTimeout(() => this.props.history.push('/home'), 2000)
+                }
+                else {
+                    this.setState({ showError: this.props.auth.signInError })
                 }
             })
     }
@@ -82,7 +88,7 @@ class Login extends Component {
                             <Input type='password' name='password' value={this.state.password} onChange={this.handleChange} />
                             {this.state.submitted && this.state.email !== '' && this.state.password === '' ? <Label color='red' pointing basic>Please enter your password</Label> : null}
                         </Form.Field>
-                        {this.props.auth.signInError === '' ? null : <Form.Field><Header size='tiny' color='red'>{this.props.auth.signInError}</Header></Form.Field>}
+                        {this.state.showError === '' ? null : <Form.Field><Header size='tiny' color='red'>{this.state.showError}</Header></Form.Field>}
                         <Button color='linkedin' style={{ borderRadius: '0px' }} onClick={this.submit}>Sign In</Button>
                         <Header size='tiny'>Don't have an account? <Header to='/sign-up' size='tiny' color='blue' as={Link}>Click here</Header></Header>
                     </Form>
