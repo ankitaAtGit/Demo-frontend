@@ -33,7 +33,7 @@ export default (state = initState, action) => {
             return Object.assign({}, state, { error: action.error, course: {} })
 
         case types.CREATE_COURSE_SUCCESS:
-            return Object.assign({}, state, { course: action.course })
+            return Object.assign({}, state, { course: action.course, allCourses: [...state.allCourses, action.course] })
         case types.CREATE_COURSE_FAIL:
             return Object.assign({}, state, { error: action.error })
 
@@ -68,7 +68,6 @@ export default (state = initState, action) => {
 
         case types.RATE_COURSE_SUCCESS:
             let { CourseId, rating, avg } = action;
-            debugger
             let rateCourses = state.subbedCourses;
             let x = rateCourses.findIndex(course => course.CourseId === CourseId && course.UserId === rating.UserId)
             rateCourses[x].course_rating = rating.course_rating;

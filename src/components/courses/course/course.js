@@ -2,14 +2,14 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'react-router-dom'
-import { Header, Button, Confirm, Icon, Rating, Accordion, Table, Grid, Progress, Popup } from 'semantic-ui-react';
+import { Header, Button, Confirm, Icon, Rating, Accordion, Table } from 'semantic-ui-react';
 
 import * as courseActions from '../../../actions/course.actions';
 import * as chapterActions from '../../../actions/chapter.actions';
 import * as cartActions from '../../../actions/cart.actions'
 import CheckoutModal from '../../checkout/checkout';
+// import LectureViewer from './lectureViewer'
 import { filePath } from '../../../constants/path';
-import StudyCourse from '../studycourse/studyCourse';
 
 class Course extends Component {
     state = {
@@ -21,7 +21,9 @@ class Course extends Component {
         activeIndex: -1,
         open: false,
         showError: false,
-        subscriberCount: 0
+        subscriberCount: 0,
+        viewLecture: '',
+        openViewer: false
     }
     componentWillMount() {
         if (localStorage.getItem('id') && localStorage.getItem('token')) {
@@ -88,6 +90,9 @@ class Course extends Component {
         else {
             this.props.history.replace({ pathname: '/sign-in', state: { from: { pathname: this.props.location.pathname } } })
         }
+    }
+    toggleModal = (lecture) => {
+        this.setState(oldState => ({ openViewer: !oldState.openViewer, viewLecture: oldState.openViewer === false ? lecture : '' }))
     }
     rateCourse = (event, { rating }) => {
         this.setState({ course_rating: rating })
@@ -170,54 +175,66 @@ class Course extends Component {
                                         <div>
                                             <Header size='small'>Rate this course: </Header>
                                             <Rating maxRating={5} onRate={this.rateCourse} rating={this.state.course_rating} icon='star' />{" "}
-                                            <br /><br />
+                                            {/* <br /><br />
                                             <Popup trigger={<Progress color='green' percent={50} size='small' />} on='hover' position='bottom center'>
                                                 <Popup.Content>Static progress bar, will show current chapter and video</Popup.Content>
-                                            </Popup>
+                                            </Popup> */}
                                         </div>
                                     )
                             }
                         </div>
-                        <div style={{ marginLeft: '70px', marginTop: '30px' }}>
+                        <div style={{ marginLeft: '170px', marginTop: '30px' }}>
                             {(localStorage.getItem('token') && (this.state.subbedCourses.findIndex((c) => c.CourseId === course.id) !== -1)) ||
                                 (localStorage.getItem('token') && Number(localStorage.getItem('id')) === course.author.id) ?
                                 <div>
                                     <Header>Course Content</Header>
-                                    {
-                                        this.props.chapter.chapters.length > 0 ?
-                                            this.props.chapter.chapters.map((ch, i) => {
-                                                return (
-                                                    <div key={i}>
-                                                        <Header><Icon name='caret right' />{ch.chapter_title}</Header>
-                                                        <Grid columns={4} style={{ display: "flex", width: '1200px' }} key={ch.id}>
-                                                            <Grid.Row>
-                                                                {ch.ChapterFiles.map(f => {
-                                                                    return (
-                                                                        <Grid.Column key={f.id} style={{ marginRight: '20px', marginBottom: '45px' }}>
-                                                                            {f.file_type.match('video') ?
-                                                                                < video key={f.id} width="300" height='160' controls>
-                                                                                    <source src={filePath + f.file_name} type={f.file_type} />
-                                                                                    Your browser does not support the video tag
-                                                                                </video> :
-                                                                                <a target='new' href={filePath + f.file_name}>
-                                                                                    <div style={{ textAlign: 'center' }}>
-                                                                                        <Icon size='massive' name='file' />
-                                                                                        <Header size='small'>{f.file_name}</Header>
-                                                                                    </div>
-                                                                                </a>}
-                                                                        </Grid.Column>
-                                                                    )
+                                    {this.props.chapter.chapters.length > 0 ? <Accordion styled style={{ width: '800px' }}>
+                                        {this.props.chapter.chapters.map((chapter, i) => {
+                                            return (
+                                                <div key={i}>
+                                                    <Accordion.Title active={this.state.activeIndex === i} onClick={(e, { index }) => this.setState(oldState => ({ activeIndex: oldState.activeIndex === index ? -1 : index }))} index={i}>
+                                                        <div style={{ display: 'flex' }}>
+                                                            <div style={{ width: '50%' }}>
+                                                                <Header size='medium'>{chapter.chapter_title}</Header>
+                                                            </div>
+                                                        </div>
+                                                    </Accordion.Title>
+                                                    {chapter.ChapterFiles.length > 0 ? <Accordion.Content active={this.state.activeIndex === i}>
+                                                        <Table>
+                                                            <Table.Body>
+                                                                {chapter.ChapterFiles.map((file, i) => {
+                                                                    return <Table.Row key={i}>
+                                                                        <Table.Cell>
+                                                                            {/* <LectureViewer
+                                                                                trigger={<Header style={{ cursor: 'pointer' }} color='grey' size='tiny' onClick={() => this.toggleModal(file)}>
+                                                                                    {file.file_type.match('video') ? <Icon name='video play' /> : <Icon name='file' />}
+                                                                                    {file.file_name}
+                                                                                </Header>}
+                                                                                lecture={this.state.viewLecture}
+                                                                                open={this.state.openViewer}
+                                                                                toggle={this.toggleModal}
+                                                                            /> */}
+                                                                            <a target='new' href={filePath + file.file_name}>
+                                                                                <Header style={{ cursor: 'pointer' }} color='grey' size='tiny' onClick={() => this.toggleModal(file)}>
+                                                                                    {file.file_type.match('video') ? <Icon name='video play' /> : <Icon name='file' />}
+                                                                                    {file.file_name}
+                                                                                </Header>
+                                                                            </a>
+
+                                                                        </Table.Cell>
+                                                                    </Table.Row>
                                                                 })}
-                                                            </Grid.Row>
-                                                        </Grid>
-                                                    </div>
-                                                )
-                                            }) : null
-                                        // <StudyCourse chapters={this.props.chapter.chapters} instructor={Number(localStorage.getItem('id')) === course.author.id} />
+                                                            </Table.Body>
+                                                        </Table>
+                                                    </Accordion.Content> : null}
+                                                </div>
+                                            )
+                                        })}
+                                    </Accordion> : null
                                     }
                                 </div> :
                                 this.props.chapter.chapters.length > 0 ?
-                                    <div style={{ marginLeft: '130px' }}>
+                                    <div style={{ marginLeft: '70px' }}>
                                         <Header>Course Content</Header>
                                         <Accordion styled style={{ width: '800px' }}>
                                             {this.props.chapter.chapters.map((chapter, i) => {
@@ -236,7 +253,11 @@ class Course extends Component {
                                                                     {chapter.ChapterFiles.map((file, i) => {
                                                                         return <Table.Row key={i}>
                                                                             <Table.Cell textAlign='left'>
-                                                                                {file.file_type.match('video') ? <Icon name='video play' /> : <Icon name='file' />} {file.file_name}</Table.Cell>
+                                                                                <Header color='grey' size='tiny' onClick={() => this.toggleModal(file)}>
+                                                                                    {file.file_type.match('video') ? <Icon name='video play' /> : <Icon name='file' />}
+                                                                                    {file.file_name}
+                                                                                </Header>
+                                                                            </Table.Cell>
                                                                         </Table.Row>
                                                                     })}
                                                                 </Table.Body>

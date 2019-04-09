@@ -153,7 +153,6 @@ class CourseChapters extends Component {
                             </Table> : null}
 
                         </Form.Field>
-                        <Form.Field><Header size='small'>Note: Chapters will be ordered according to their title</Header></Form.Field>
                         <Form.Field>
                             {this.state.editing ? <Button type='button' style={{ borderRadius: '0px' }} content='Save Changes' color='linkedin' onClick={this.updateChapter} />
                                 : <Button type='button' style={{ borderRadius: '0px' }} content='Add Chapter' color='linkedin' onClick={this.addChapter} />}
@@ -195,8 +194,13 @@ class CourseChapters extends Component {
                                             {chapter.ChapterFiles.map((file, i) => {
                                                 return <Table.Row key={i}>
                                                     <Table.Cell>
-                                                        <a target='new' href={filePath + file.file_name}>{file.file_type.match('video') ? <Icon name='video play' /> : <Icon name='file' />}
-                                                            {file.file_name}</a></Table.Cell>
+                                                        <a target='new' href={filePath + file.file_name}>
+                                                            <Header style={{ cursor: 'pointer' }} color='grey' size='tiny' onClick={() => this.toggleModal(file)}>
+                                                                {file.file_type.match('video') ? <Icon name='video play' /> : <Icon name='file' />}
+                                                                {file.file_name}
+                                                            </Header>
+                                                        </a>
+                                                    </Table.Cell>
                                                 </Table.Row>
                                             })}
                                         </Table.Body>
@@ -228,5 +232,4 @@ const mapDispatch = (dispatch) => {
 }
 
 export default withRouter(connect(mapState, mapDispatch)(CourseChapters))
-
 

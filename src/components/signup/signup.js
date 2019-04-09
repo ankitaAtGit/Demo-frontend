@@ -145,12 +145,12 @@ class SignUp extends Component {
                         <Form.Field>
                             <label>Upload your profile picture</label>
                             {
-                                this.state.displayPic === '' ? < ImageUploader
+                                this.state.displayPic === '' ? <ImageUploader
                                     withIcon={true}
                                     name='picture'
                                     buttonText='Choose images'
                                     onChange={this.onDrop}
-                                    imgExtension={['.jpg', '.gif', '.png', '.gif']}
+                                    imgExtension={['.jpg', '.png', '.jpeg']}
                                     singleImage={true} accept={"image/*"}
                                     maxFileSize={5242880} /> :
                                     <div style={{ textAlign: 'center' }}>

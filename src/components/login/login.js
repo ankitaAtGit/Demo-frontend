@@ -45,14 +45,18 @@ class Login extends Component {
                     this.props.getCoursesByUser(this.props.auth.id).then(() => {
                         let courses = this.props.course.courses
                         if (JSON.parse(localStorage.getItem('cart')).length > 0) {
-                            this.props.getSubbedCourses(this.props.auth.id).then(() => {
-                                let subbedCourses = this.props.course.subbedCourses;
-                                JSON.parse(localStorage.getItem('cart')).forEach(c => {
-                                    if (courses.findIndex(course => course.id === c.id) === -1 && subbedCourses.findIndex(course => course.CourseId === c.id) === -1)
-                                        this.props.addToCart({ UserId: this.props.auth.id, CourseId: c.id })
+                            this.props.getCart(this.props.auth.id).then(() => {
+                                let cartItems = this.props.cart.cart
+                                this.props.getSubbedCourses(this.props.auth.id).then(() => {
+                                    let subbedCourses = this.props.course.subbedCourses;
+                                    JSON.parse(localStorage.getItem('cart')).forEach(c => {
+                                        if (courses.findIndex(course => course.id === c.id) === -1 && subbedCourses.findIndex(course => course.CourseId === c.id) === -1 && cartItems.findIndex(cart => cart.CourseId === c.id) === -1)
+                                            this.props.addToCart({ UserId: this.props.auth.id, CourseId: c.id })
+                                    })
+                                    this.props.emptyCart();
                                 })
-                                this.props.emptyCart();
                             })
+
 
                         }
                     })
@@ -101,7 +105,8 @@ class Login extends Component {
 const mapState = (state) => {
     return {
         auth: state.auth,
-        course: state.course
+        course: state.course,
+        cart: state.cart
     }
 }
 
@@ -110,7 +115,8 @@ const mapDispatch = (dispatch) => {
         login: bindActionCreators(authActions.signInAction, dispatch),
         addToCart: bindActionCreators(cartActions.addToCartAction, dispatch),
         getCoursesByUser: bindActionCreators(courseActions.getCourseByUserId, dispatch),
-        getSubbedCourses: bindActionCreators(courseActions.getSubscribeCourses, dispatch)
+        getSubbedCourses: bindActionCreators(courseActions.getSubscribeCourses, dispatch),
+        getCart: bindActionCreators(cartActions.getCartAction, dispatch)
     }
 }
 

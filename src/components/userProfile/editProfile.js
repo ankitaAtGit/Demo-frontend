@@ -30,12 +30,14 @@ class EditProfile extends Component {
     }
     onDrop = (img) => {
         let reader = new FileReader();
-        reader.readAsDataURL(img[0]);
-        reader.onloadend = () => {
-            this.setState({
-                picture: img[0],
-                displayPic: reader.result
-            });
+        if (img[0]) {
+            reader.readAsDataURL(img[0]);
+            reader.onloadend = () => {
+                this.setState({
+                    picture: img[0],
+                    displayPic: reader.result
+                });
+            }
         }
     }
     removeImage = () => {
@@ -98,7 +100,7 @@ class EditProfile extends Component {
                                     name='picture'
                                     buttonText='Choose images'
                                     onChange={this.onDrop}
-                                    imgExtension={['.jpg', '.gif', '.png', '.gif']}
+                                    imgExtension={['.jpg', '.png', '.jpeg']}
                                     singleImage={true} accept={"image/*"}
                                     maxFileSize={5242880} /> :
                                     <div style={{ textAlign: 'center' }}>
