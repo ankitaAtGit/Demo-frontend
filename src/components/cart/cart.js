@@ -58,6 +58,9 @@ class Cart extends Component {
         else
             this.props.history.replace({ pathname: '/sign-in', state: { from: { pathname: this.props.location.pathname } } })
     }
+    displayCourse = (courseId) => {
+        this.props.history.push(`/course/details/${courseId}`)
+    }
     render() {
         return (
             <div style={{ margin: '40px' }}>
@@ -70,7 +73,7 @@ class Cart extends Component {
                                         <Item key={i}>
                                             <div style={{ margin: 'auto', width: '900px', boxShadow: '2px 3px 2px 2px lightgrey', padding: '20px' }}>
                                                 <div>
-                                                    <Item.Content>
+                                                    <Item.Content style={{ cursor: 'pointer' }} onClick={() => this.displayCourse(course.id)}>
                                                         <Item.Header>
                                                             <Header>{course.course_name}</Header>
                                                         </Item.Header>

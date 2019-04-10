@@ -195,7 +195,7 @@ class CourseChapters extends Component {
                                                 return <Table.Row key={i}>
                                                     <Table.Cell>
                                                         <a target='new' href={filePath + file.file_name}>
-                                                            <Header style={{ cursor: 'pointer' }} color='grey' size='tiny' onClick={() => this.toggleModal(file)}>
+                                                            <Header style={{ cursor: 'pointer' }} color='grey' size='tiny'>
                                                                 {file.file_type.match('video') ? <Icon name='video play' /> : <Icon name='file' />}
                                                                 {file.file_name}
                                                             </Header>

@@ -5,6 +5,7 @@ import { withRouter } from 'react-router-dom'
 import { Header, Button, Confirm, Icon, Rating, Accordion, Table } from 'semantic-ui-react';
 
 import * as courseActions from '../../../actions/course.actions';
+import * as wishlistActions from '../../../actions/wishlist.action'
 import * as chapterActions from '../../../actions/chapter.actions';
 import * as cartActions from '../../../actions/cart.actions'
 import CheckoutModal from '../../checkout/checkout';
@@ -22,12 +23,16 @@ class Course extends Component {
         open: false,
         showError: false,
         subscriberCount: 0,
-        viewLecture: '',
-        openViewer: false
+        wishlist: []
     }
     componentWillMount() {
         if (localStorage.getItem('id') && localStorage.getItem('token')) {
             this.props.getCart(Number(localStorage.getItem('id')))
+            this.props.getWishlist(Number(localStorage.getItem('id'))).then(() => {
+                if (this.props.wishlist.error === '') {
+                    this.setState({ wishlist: this.props.wishlist.wishlist })
+                }
+            })
             this.props.getSubscribeCourses(Number(localStorage.getItem('id'))).then(() => {
                 let i = this.props.course.subbedCourses.findIndex(course => course.CourseId === Number(this.props.match.params.id));
                 if (i !== -1)
@@ -60,6 +65,9 @@ class Course extends Component {
         if (newProps.userCart !== this.props.userCart) {
             this.setState({ cart: newProps.userCart })
         }
+        if (newProps.wishlist.wishlist !== this.props.wishlist.wishlist) {
+            this.setState({ wishlist: newProps.wishlist.wishlist })
+        }
         this.setState({ subscriberCount: newProps.course.course.subscriberCount })
     }
     toggleConfirm = () => {
@@ -91,8 +99,11 @@ class Course extends Component {
             this.props.history.replace({ pathname: '/sign-in', state: { from: { pathname: this.props.location.pathname } } })
         }
     }
-    toggleModal = (lecture) => {
-        this.setState(oldState => ({ openViewer: !oldState.openViewer, viewLecture: oldState.openViewer === false ? lecture : '' }))
+    removeWishlist = (courseId) => {
+        this.props.removeFromWishlist(Number(localStorage.getItem('id')), courseId)
+    }
+    addWishlist = (courseId) => {
+        this.props.addToWishlist({ UserId: Number(localStorage.getItem('id')), CourseId: courseId })
     }
     rateCourse = (event, { rating }) => {
         this.setState({ course_rating: rating })
@@ -169,16 +180,17 @@ class Course extends Component {
                                             this.state.cart.findIndex(c => c.id === course.id) === -1 ?
                                                 <Button style={{ borderRadius: '0px' }} onClick={this.addToCart} color='linkedin'>Add to Cart</Button> :
                                                 <Button style={{ borderRadius: '0px' }} onClick={this.goToCart} color='linkedin'>Go to Cart</Button>}
+                                        {localStorage.getItem('id') && localStorage.getItem('token') ?
+                                            this.state.wishlist.findIndex((w => w.CourseId === course.id)) === -1 ?
+                                                <Button style={{ borderRadius: '0px', marginTop: '10px' }} onClick={() => this.addWishlist(course.id)} inverted icon='heart' color='red' content='Add to Wishlist' /> :
+                                                <Button style={{ borderRadius: '0px', marginTop: '10px' }} basic icon='heart' content='Remove From Wishlist' onClick={() => this.removeWishlist(course.id)} />
+                                            : null}
                                     </div>
                                     :
                                     (
                                         <div>
                                             <Header size='small'>Rate this course: </Header>
                                             <Rating maxRating={5} onRate={this.rateCourse} rating={this.state.course_rating} icon='star' />{" "}
-                                            {/* <br /><br />
-                                            <Popup trigger={<Progress color='green' percent={50} size='small' />} on='hover' position='bottom center'>
-                                                <Popup.Content>Static progress bar, will show current chapter and video</Popup.Content>
-                                            </Popup> */}
                                         </div>
                                     )
                             }
@@ -205,17 +217,8 @@ class Course extends Component {
                                                                 {chapter.ChapterFiles.map((file, i) => {
                                                                     return <Table.Row key={i}>
                                                                         <Table.Cell>
-                                                                            {/* <LectureViewer
-                                                                                trigger={<Header style={{ cursor: 'pointer' }} color='grey' size='tiny' onClick={() => this.toggleModal(file)}>
-                                                                                    {file.file_type.match('video') ? <Icon name='video play' /> : <Icon name='file' />}
-                                                                                    {file.file_name}
-                                                                                </Header>}
-                                                                                lecture={this.state.viewLecture}
-                                                                                open={this.state.openViewer}
-                                                                                toggle={this.toggleModal}
-                                                                            /> */}
                                                                             <a target='new' href={filePath + file.file_name}>
-                                                                                <Header style={{ cursor: 'pointer' }} color='grey' size='tiny' onClick={() => this.toggleModal(file)}>
+                                                                                <Header style={{ cursor: 'pointer' }} color='grey' size='tiny'>
                                                                                     {file.file_type.match('video') ? <Icon name='video play' /> : <Icon name='file' />}
                                                                                     {file.file_name}
                                                                                 </Header>
@@ -253,7 +256,7 @@ class Course extends Component {
                                                                     {chapter.ChapterFiles.map((file, i) => {
                                                                         return <Table.Row key={i}>
                                                                             <Table.Cell textAlign='left'>
-                                                                                <Header color='grey' size='tiny' onClick={() => this.toggleModal(file)}>
+                                                                                <Header color='grey' size='tiny'>
                                                                                     {file.file_type.match('video') ? <Icon name='video play' /> : <Icon name='file' />}
                                                                                     {file.file_name}
                                                                                 </Header>
@@ -278,9 +281,9 @@ class Course extends Component {
 
 
 const mapState = (state) => {
-    let { course, chapter, cart } = state;
+    let { course, chapter, cart, wishlist } = state;
     return {
-        course, chapter, cart
+        course, chapter, cart, wishlist
     }
 }
 
@@ -293,7 +296,10 @@ const mapDispatch = (dispatch) => {
         rateCourse: bindActionCreators(courseActions.rateCourseAction, dispatch),
         getChapters: bindActionCreators(chapterActions.getChaptersAction, dispatch),
         getCart: bindActionCreators(cartActions.getCartAction, dispatch),
-        addToCart: bindActionCreators(cartActions.addToCartAction, dispatch)
+        addToCart: bindActionCreators(cartActions.addToCartAction, dispatch),
+        addToWishlist: bindActionCreators(wishlistActions.addWishlistAction, dispatch),
+        getWishlist: bindActionCreators(wishlistActions.getWishlistAction, dispatch),
+        removeFromWishlist: bindActionCreators(wishlistActions.removeWishlistAction, dispatch)
     }
 }
 

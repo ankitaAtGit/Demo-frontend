@@ -35,7 +35,7 @@ class Header extends Component {
                 this.props.countCart(Number(localStorage.getItem('id')))
             }
         if (newProps.cartCount !== this.props.cartCount) {
-            this.setState({cartCount:newProps.cartCount})
+            this.setState({ cartCount: newProps.cartCount })
         }
     }
     handleSignInClick = () => {
@@ -135,8 +135,9 @@ class Header extends Component {
                         </Menu.Item>
                         <Dropdown text='Profile' className='item'>
                             <Dropdown.Menu style={{ borderRadius: '0px' }}>
-                                <Dropdown.Item onClick={() => this.props.history.push('/profile')}>Profile</Dropdown.Item>
-                                <Dropdown.Item onClick={() => this.props.history.push('/mycourses')}>Courses</Dropdown.Item>
+                                <Dropdown.Item onClick={() => this.props.history.push('/profile')}> <Icon name='user' />Profile</Dropdown.Item>
+                                <Dropdown.Item onClick={() => this.props.history.push('/mycourses')}> <Icon name='student' />Courses</Dropdown.Item>
+                                <Dropdown.Item onClick={() => this.props.history.push('/mywishlist')}> <Icon name='heart' />Wishlist</Dropdown.Item>
                             </Dropdown.Menu>
                         </Dropdown>
                         <Menu.Item>

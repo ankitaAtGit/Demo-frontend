@@ -14,6 +14,7 @@ import UserCourses from './components/userProfile/userCourses'
 import store from './store'
 import CourseChapters from './components/addCourse/courseChapters'
 import Cart from './components/cart/cart'
+import Wishlist from './components/wishlist/wishlist'
 import PrivateRoute from './components/privateroute/privateRoute'
 
 class App extends Component {
@@ -48,7 +49,7 @@ class App extends Component {
     this.setState({ userCart: newCourses, cartCount })
   }
   emptyCart = () => {
-    this.setState({ userCart: [], cartCount:0 })
+    this.setState({ userCart: [], cartCount: 0 })
     localStorage.setItem('cart', JSON.stringify([]))
   }
   render() {
@@ -68,6 +69,7 @@ class App extends Component {
               <PrivateRoute path='/new-course' component={AddCourse} />
               <PrivateRoute path='/edit-course/:id' component={AddCourse} />
               <PrivateRoute path='/mycourses' component={UserCourses} />
+              <PrivateRoute path='/mywishlist' component={Wishlist} />
               <Route path='/cart' render={(props) => <Cart {...props} userCart={this.state.userCart} removeFromUserCart={this.removeFromUserCart} />} />
               <Route path='/' component={Dashboard} />
             </Switch>

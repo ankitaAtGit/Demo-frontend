@@ -40,6 +40,10 @@ const initState = {
         cart: [],
         error: '',
         count: 0
+    },
+    wishlist: {
+        wishlist: [],
+        error: ''
     }
 }
 
